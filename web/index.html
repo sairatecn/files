@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDN File Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 顶部配置栏 -->
+        <header>
+            <div class="config-row">
+                <label for="repoInput">GitHub 仓库</label>
+                <input type="text" id="repoInput" placeholder="用户名/仓库名" value="sairatecn/files">
+                <label for="branchInput">分支</label>
+                <input type="text" id="branchInput" placeholder="main" value="master">
+                <button id="saveRepoBtn" class="btn primary">保存仓库</button>
+            </div>
+            <div class="config-row domains-row">
+                <span class="label">CDN 域名</span>
+                <div id="domainList" class="domain-tags"></div>
+                <button id="addDomainBtn" class="btn secondary">+ 添加</button>
+                <button id="saveDomainsBtn" class="btn primary">保存域名</button>
+            </div>
+        </header>
+
+        <!-- 主体 -->
+        <main>
+            <section id="treePanel">
+                <h3>📂 文件树</h3>
+                <div id="treeContainer"></div>
+            </section>
+            <section id="detailPanel">
+                <h3>🔗 CDN 链接</h3>
+                <div id="detailContent">
+                    <p class="placeholder">点击左侧文件或文件夹查看</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="text/javascript" src="/eel.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
