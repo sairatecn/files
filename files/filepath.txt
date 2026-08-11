@@ -68,5 +68,6 @@ cpp\races\csp-js\J\2022-J1.md
 cpp\races\csp-js\J\2023-J1.md
 cpp\races\csp-js\J\2024-J1.md
 cpp\races\csp-js\J\2025-J1.md
+cpp\races\csp-js\J\assets\image-20260811105707210.png
 font\Y-B008YeZiGongChangDanDanHei-2.ttf
 images\background1.png
