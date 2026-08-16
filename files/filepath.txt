@@ -1,3 +1,4 @@
+cpp\problems\GESP\三级\春游.mp4
 cpp\problems\信息学奥赛一本通第一部分\第三章分支结构\3.10有一门课不及格的学生.md
 cpp\problems\信息学奥赛一本通第一部分\第三章分支结构\3.11晶晶赴约会.md
 cpp\problems\信息学奥赛一本通第一部分\第三章分支结构\3.12骑车与走路.md
@@ -18,6 +19,7 @@ cpp\problems\信息学奥赛一本通第一部分\第三章分支结构\3.6判�
 cpp\problems\信息学奥赛一本通第一部分\第三章分支结构\3.7收集瓶盖赢大奖.md
 cpp\problems\信息学奥赛一本通第一部分\第三章分支结构\3.8判断一个数能否同时被3和5整除.md
 cpp\problems\信息学奥赛一本通第一部分\第三章分支结构\3.9判断能否被3，5，7整除.md
+cpp\problems\信息学奥赛一本通第一部分\第五章数组\media\矩阵转置.mp4
 cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\4.10与指定数字相同的数的个数.md
 cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\4.11乘方计算.md
 cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\4.12人口增长计算.md
@@ -61,6 +63,7 @@ cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\4.6奥�
 cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\4.7奇数求和.md
 cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\4.8满足条件的数累加.md
 cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\4.9整数的个数.md
+cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\media\0439画矩形.mp4
 cpp\races\csp-js\J\2019-J1.md
 cpp\races\csp-js\J\2020-J1.md
 cpp\races\csp-js\J\2021-J1.md
@@ -69,5 +72,12 @@ cpp\races\csp-js\J\2023-J1.md
 cpp\races\csp-js\J\2024-J1.md
 cpp\races\csp-js\J\2025-J1.md
 cpp\races\csp-js\J\assets\image-20260811105707210.png
+cpp\races\csp-js\S\2019-S.md
+cpp\races\csp-js\S\2020-S.md
+cpp\races\csp-js\S\2021-S.md
+cpp\races\csp-js\S\2022-S.md
+cpp\races\csp-js\S\2023-S.md
+cpp\races\csp-js\S\2024-S.md
+cpp\races\csp-js\S\2025CSP-S1.md
 font\Y-B008YeZiGongChangDanDanHei-2.ttf
 images\background1.png
