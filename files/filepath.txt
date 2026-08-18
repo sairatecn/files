@@ -64,6 +64,7 @@ cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\4.7奇�
 cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\4.8满足条件的数累加.md
 cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\4.9整数的个数.md
 cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\media\0439画矩形.mp4
+cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\media\0441第n小的质数.mp4
 cpp\races\csp-js\J\2019-J1.md
 cpp\races\csp-js\J\2020-J1.md
 cpp\races\csp-js\J\2021-J1.md
@@ -78,6 +79,6 @@ cpp\races\csp-js\S\2021-S.md
 cpp\races\csp-js\S\2022-S.md
 cpp\races\csp-js\S\2023-S.md
 cpp\races\csp-js\S\2024-S.md
-cpp\races\csp-js\S\2025CSP-S1.md
+cpp\races\csp-js\S\2025-S.md
 font\Y-B008YeZiGongChangDanDanHei-2.ttf
 images\background1.png
