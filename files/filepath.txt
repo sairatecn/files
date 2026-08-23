@@ -1,4 +1,5 @@
 cpp\problems\GESP\三级\春游.mp4
+cpp\problems\GESP\三级\春游python.mp4
 cpp\problems\信息学奥赛一本通第一部分\第三章分支结构\3.10有一门课不及格的学生.md
 cpp\problems\信息学奥赛一本通第一部分\第三章分支结构\3.11晶晶赴约会.md
 cpp\problems\信息学奥赛一本通第一部分\第三章分支结构\3.12骑车与走路.md
@@ -64,6 +65,7 @@ cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\4.7奇�
 cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\4.8满足条件的数累加.md
 cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\4.9整数的个数.md
 cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\media\0439画矩形.mp4
+cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\media\0440质因数分解.mp4
 cpp\problems\信息学奥赛一本通第一部分\第四章循环结构\media\0441第n小的质数.mp4
 cpp\races\csp-js\J\2019-J1.md
 cpp\races\csp-js\J\2020-J1.md
