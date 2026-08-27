@@ -19,7 +19,9 @@ DEFAULT_CONFIG = {
     "domains": [
         "cdn.jsdelivr.net",
         "fastly.jsdelivr.net",
-        "gcore.jsdelivr.net"
+        "gcore.jsdelivr.net",
+        "cdn.jsdmirror.com",
+        "jsd.cdn.zzko.cn"
     ]
 }
 

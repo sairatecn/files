@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>图片幻灯片</title>
+    <style>
+        /* ===== 全局重置 ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f0f2f5;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        /* ===== 轮播容器 ===== */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 16 / 9;          /* 固定比例，也可改为 auto */
+            background: #1a1a1e;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            user-select: none;
+            touch-action: pan-y;
+        }
+
+        /* ===== 幻灯片轨道 ===== */
+        .slider-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1a1a1e;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;   /* 保持比例，裁剪填充用 cover */
+            display: block;
+            background: #1a1a1e;
+        }
+
+        /* ===== 导航箭头 ===== */
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, transform 0.2s;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+            touch-action: manipulation;
+        }
+        .slider-btn:hover {
+            background: rgba(0, 0, 0, 0.7);
+        }
+        .slider-btn:active {
+            transform: translateY(-50%) scale(0.9);
+        }
+        .slider-btn.prev {
+            left: 12px;
+        }
+        .slider-btn.next {
+            right: 12px;
+        }
+
+        /* ===== 底部指示点 ===== */
+        .slider-dots {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 14px;
+            border-radius: 30px;
+            backdrop-filter: blur(4px);
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            border: none;
+            padding: 0;
+            touch-action: manipulation;
+        }
+        .dot.active {
+            background: #fff;
+            transform: scale(1.2);
+        }
+        .dot:hover {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ===== 响应式调整 ===== */
+        @media (max-width: 600px) {
+            .slider-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+            .slider-btn.prev { left: 8px; }
+            .slider-btn.next { right: 8px; }
+            .slider-dots { gap: 8px; padding: 4px 12px; }
+            .dot { width: 8px; height: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slider-container" id="slider">
+        <!-- 幻灯片轨道 -->
+        <div class="slider-track" id="track"></div>
+
+        <!-- 导航按钮 -->
+        <button class="slider-btn prev" id="prevBtn" aria-label="上一张">‹</button>
+        <button class="slider-btn next" id="nextBtn" aria-label="下一张">›</button>
+
+        <!-- 指示点 -->
+        <div class="slider-dots" id="dotsContainer"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        // ★★★ 配置区域 – 在这里填入您的图片链接 ★★★
+        // ============================================================
+        const images = [
+            'https://cdn.jsdmirror.com/gh/sairatecn/files@master/files/images/Forest.webp',
+            'https://cdn.jsdmirror.com/gh/sairatecn/files@master/files/images/Interstellar.webp',
+            'https://cdn.jsdmirror.com/gh/sairatecn/files@master/files/images/wilderness.webp',
+        ];
+
+        // ============================================================
+        // 轮播逻辑（无需修改）
+        // ============================================================
+        let currentIndex = 0;
+        let intervalId = null;
+        const autoplayDelay = 4000; // 自动切换间隔（毫秒）
+
+        const track = document.getElementById('track');
+        const dotsContainer = document.getElementById('dotsContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        // 构建幻灯片
+        function buildSlides() {
+            track.innerHTML = '';
+            dotsContainer.innerHTML = '';
+
+            images.forEach((src, index) => {
+                // 创建 slide
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = `Slide ${index + 1}`;
+                img.loading = 'lazy';
+                slide.appendChild(img);
+                track.appendChild(slide);
+
+                // 创建指示点
+                const dot = document.createElement('button');
+                dot.className = 'dot' + (index === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', `跳转到第 ${index + 1} 张`);
+                dot.dataset.index = index;
+                dot.addEventListener('click', () => goTo(index));
+                dotsContainer.appendChild(dot);
+            });
+
+            // 如果没有图片，显示占位信息
+            if (images.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'slide';
+                empty.style.cssText = 'display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;';
+                empty.textContent = '暂无图片，请添加图片链接';
+                track.appendChild(empty);
+                dotsContainer.style.display = 'none';
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+                return;
+            }
+        }
+
+        // 跳转到指定索引
+        function goTo(index) {
+            const total = images.length;
+            if (total === 0) return;
+            // 循环边界
+            if (index < 0) index = total - 1;
+            if (index >= total) index = 0;
+            currentIndex = index;
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+            // 更新指示点状态
+            document.querySelectorAll('.dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentIndex);
+            });
+        }
+
+        // 下一张
+        function next() {
+            goTo(currentIndex + 1);
+        }
+
+        // 上一张
+        function prev() {
+            goTo(currentIndex - 1);
+        }
+
+        // 启动自动播放
+        function startAutoplay() {
+            if (images.length <= 1) return;
+            stopAutoplay();
+            intervalId = setInterval(next, autoplayDelay);
+        }
+
+        // 停止自动播放
+        function stopAutoplay() {
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
+        }
+
+        // 重置自动播放（手动操作后重新计时）
+        function resetAutoplay() {
+            if (images.length <= 1) return;
+            stopAutoplay();
+            startAutoplay();
+        }
+
+        // ===== 事件绑定 =====
+        prevBtn.addEventListener('click', () => {
+            prev();
+            resetAutoplay();
+        });
+        nextBtn.addEventListener('click', () => {
+            next();
+            resetAutoplay();
+        });
+
+        // 键盘左右键支持
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                prev();
+                resetAutoplay();
+            } else if (e.key === 'ArrowRight') {
+                next();
+                resetAutoplay();
+            }
+        });
+
+        // 触摸滑动支持（移动端）
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isSwiping = false;
+
+        const container = document.getElementById('slider');
+        container.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            isSwiping = true;
+        }, { passive: true });
+
+        container.addEventListener('touchmove', (e) => {
+            if (!isSwiping) return;
+            // 阻止页面滚动当水平滑动时
+            const touch = e.touches[0];
+            const diffX = touch.clientX - touchStartX;
+            const diffY = touch.clientY - touchStartY;
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 20) {
+                e.preventDefault(); // 阻止垂直滚动
+            }
+        }, { passive: false });
+
+        container.addEventListener('touchend', (e) => {
+            if (!isSwiping) return;
+            isSwiping = false;
+            const touch = e.changedTouches[0];
+            const diffX = touch.clientX - touchStartX;
+            if (Math.abs(diffX) > 50) { // 滑动距离阈值
+                if (diffX < 0) {
+                    next();
+                } else {
+                    prev();
+                }
+                resetAutoplay();
+            }
+        }, { passive: true });
+
+        // 鼠标悬停暂停自动播放（可选）
+        container.addEventListener('mouseenter', () => {
+            if (images.length > 1) stopAutoplay();
+        });
+        container.addEventListener('mouseleave', () => {
+            if (images.length > 1) startAutoplay();
+        });
+
+        // ===== 初始化 =====
+        buildSlides();
+        goTo(0);
+        if (images.length > 1) {
+            startAutoplay();
+        } else {
+            // 只有一张图片时隐藏导航和点
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            dotsContainer.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
