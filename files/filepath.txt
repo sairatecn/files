@@ -88,4 +88,6 @@ cpp\races\csp-js\S\2024-S.md
 cpp\races\csp-js\S\2025-S.md
 font\Y-B008YeZiGongChangDanDanHei-2.ttf
 images\Interstellar.png
+images\Interstellar.webp
 images\wilderness.png
+images\wilderness.webp
