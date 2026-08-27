@@ -21,6 +21,14 @@
 
 **复杂度**：O(min(a, b))，适合极小数值。
 
+**Python 实现**：
+``` python
+def gcd(a,b):
+	for i in range(min(a,b),0,-1):
+        if a%i==0 and b%i==0:
+            return i
+```
+
 ---
 
 ## 3. 辗转相除法（欧几里得算法）
@@ -40,6 +48,7 @@
 ```
 
 **Python 实现**（迭代）：
+
 ```python
 def gcd(a, b):
     a, b = abs(a), abs(b)
