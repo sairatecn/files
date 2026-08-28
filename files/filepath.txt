@@ -131,7 +131,7 @@ cpp\problems\信息学奥赛一本通第一部分\第五章数组\5.46最高分�
 cpp\problems\信息学奥赛一本通第一部分\第五章数组\5.47连续出现的字符.md
 cpp\problems\信息学奥赛一本通第一部分\第五章数组\5.48最长单词2.md
 cpp\problems\信息学奥赛一本通第一部分\第五章数组\5.4数组逆序重存放.md
-cpp\problems\信息学奥赛一本通第一部分\第五章数组\5.5Problem Details.md
+cpp\problems\信息学奥赛一本通第一部分\第五章数组\5.5年龄与疾病.md
 cpp\problems\信息学奥赛一本通第一部分\第五章数组\5.6校门外的树.md
 cpp\problems\信息学奥赛一本通第一部分\第五章数组\5.7向量点积计算.md
 cpp\problems\信息学奥赛一本通第一部分\第五章数组\5.8开关灯.md
