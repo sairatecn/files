@@ -1,4 +1,7 @@
-component\component_template.html
+cpp\docs\CSP-JS报名指南.pdf
+cpp\docs\组件文档.md
+cpp\docs\component\component_template.html
+cpp\note\数论\最大公约数（GCD）与最小公倍数（LCM）.md
 cpp\problems\GESP\三级\春游.mp4
 cpp\problems\GESP\三级\春游python.mp4
 cpp\problems\信息学奥赛一本通第一部分\第一章C++语言入门\1.1Hello,World!.md
