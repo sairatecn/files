@@ -21,6 +21,10 @@ cpp\note\算法\排序\images\m13.webp
 cpp\note\算法\排序\images\m14.webp
 cpp\note\算法\排序\images\m15.webp
 cpp\note\算法\排序\images\m16.webp
+cpp\problems\GESP\一级\Python\202603_python_1.md
+cpp\problems\GESP\一级\Python\202606_python_1.md
+cpp\problems\GESP\一级\Python\assets\2a95683155bb65e587e5d1132d84d07ebed892c10d103cc61305cd6d586bb125.jpg
+cpp\problems\GESP\一级\Python\assets\image-20260828180529002.png
 cpp\problems\GESP\三级\春游.mp4
 cpp\problems\GESP\三级\春游python.mp4
 cpp\problems\Python启蒙\29多分支if-elif-else语句\例21.2判断整数位数.md
