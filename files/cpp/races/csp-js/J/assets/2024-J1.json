@@ -1,0 +1,86 @@
+[
+  {
+    "1": {
+      "name": "一、单项选择题",
+      "answers": [
+        { "id": "1", "answer": "C", "score": 2 },
+        { "id": "2", "answer": "A", "score": 2 },
+        { "id": "3", "answer": "B", "score": 2 },
+        { "id": "4", "answer": "D", "score": 2 },
+        { "id": "5", "answer": "D", "score": 2 },
+        { "id": "6", "answer": "C", "score": 2 },
+        { "id": "7", "answer": "D", "score": 2 },
+        { "id": "8", "answer": "B", "score": 2 },
+        { "id": "9", "answer": "B", "score": 2 },
+        { "id": "10", "answer": "A", "score": 2 },
+        { "id": "11", "answer": "B", "score": 2 },
+        { "id": "12", "answer": "A", "score": 2 },
+        { "id": "13", "answer": "D", "score": 2 },
+        { "id": "14", "answer": "A", "score": 2 },
+        { "id": "15", "answer": "B", "score": 2 }
+      ]
+    }
+  },
+  {
+    "2": {
+      "name": "二、阅读程序（第一题）",
+      "answers": [
+        { "id": "16", "answer": "A", "score": 1.5 },
+        { "id": "17", "answer": "B", "score": 1.5 },
+        { "id": "18", "answer": "A", "score": 1.5 },
+        { "id": "19", "answer": "B", "score": 3 },
+        { "id": "20", "answer": "A", "score": 3 }
+      ]
+    }
+  },
+  {
+    "3": {
+      "name": "二、阅读程序（第二题）",
+      "answers": [
+        { "id": "21", "answer": "A", "score": 1.5 },
+        { "id": "22", "answer": "B", "score": 1.5 },
+        { "id": "23", "answer": "B", "score": 1.5 },
+        { "id": "24", "answer": "A", "score": 3 },
+        { "id": "25", "answer": "B", "score": 3 },
+        { "id": "26", "answer": "A", "score": 3 }
+      ]
+    }
+  },
+  {
+    "4": {
+      "name": "二、阅读程序（第三题）",
+      "answers": [
+        { "id": "27", "answer": "B", "score": 1.5 },
+        { "id": "28", "answer": "A", "score": 1.5 },
+        { "id": "29", "answer": "A", "score": 1.5 },
+        { "id": "30", "answer": "B", "score": 3 },
+        { "id": "31", "answer": "C", "score": 3 },
+        { "id": "32", "answer": "D", "score": 3 }
+      ]
+    }
+  },
+  {
+    "5": {
+      "name": "三、完善程序（第一题 判断平方数）",
+      "answers": [
+        { "id": "33", "answer": "A", "score": 3 },
+        { "id": "34", "answer": "B", "score": 3 },
+        { "id": "35", "answer": "D", "score": 3 },
+        { "id": "36", "answer": "C", "score": 3 },
+        { "id": "37", "answer": "D", "score": 3 }
+      ]
+    }
+  },
+  {
+    "6": {
+      "name": "三、完善程序（第二题 汉诺塔问题）",
+      "answers": [
+        { "id": "38", "answer": "B", "score": 3 },
+        { "id": "39", "answer": "B", "score": 3 },
+        { "id": "40", "answer": "B", "score": 3 },
+        { "id": "41", "answer": "B", "score": 3 },
+        { "id": "42", "answer": "C", "score": 3 }
+      ]
+    }
+  }
+]

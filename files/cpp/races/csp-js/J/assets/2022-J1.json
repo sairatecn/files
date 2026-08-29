@@ -1,0 +1,88 @@
+[
+  {
+    "1": {
+      "name": "一、单项选择题",
+      "answers": [
+        { "id": "1", "answer": "A", "score": 2 },
+        { "id": "2", "answer": "C", "score": 2 },
+        { "id": "3", "answer": "D", "score": 2 },
+        { "id": "4", "answer": "C", "score": 2 },
+        { "id": "5", "answer": "B", "score": 2 },
+        { "id": "6", "answer": "B", "score": 2 },
+        { "id": "7", "answer": "B", "score": 2 },
+        { "id": "8", "answer": "C", "score": 2 },
+        { "id": "9", "answer": "B", "score": 2 },
+        { "id": "10", "answer": "D", "score": 2 },
+        { "id": "11", "answer": "D", "score": 2 },
+        { "id": "12", "answer": "B", "score": 2 },
+        { "id": "13", "answer": "C", "score": 2 },
+        { "id": "14", "answer": "B", "score": 2 },
+        { "id": "15", "answer": "B", "score": 2 }
+      ]
+    }
+  },
+  {
+    "2": {
+      "name": "二、阅读程序（第一题）",
+      "answers": [
+        { "id": "16", "answer": "A", "score": 1.5 },
+        { "id": "17", "answer": "B", "score": 1.5 },
+        { "id": "18", "answer": "B", "score": 1.5 },
+        { "id": "19", "answer": "B", "score": 1.5 },
+        { "id": "20", "answer": "B", "score": 1.5 },
+        { "id": "21", "answer": "B", "score": 3 }
+      ]
+    }
+  },
+  {
+    "3": {
+      "name": "二、阅读程序（第二题）",
+      "answers": [
+        { "id": "22", "answer": "B", "score": 1.5 },
+        { "id": "23", "answer": "A", "score": 1.5 },
+        { "id": "24", "answer": "A", "score": 1.5 },
+        { "id": "25", "answer": "C", "score": 3 },
+        { "id": "26", "answer": "C", "score": 3 },
+        { "id": "27", "answer": "B", "score": 3 }
+      ]
+    }
+  },
+  {
+    "4": {
+      "name": "二、阅读程序（第三题）",
+      "answers": [
+        { "id": "28", "answer": "A", "score": 1.5 },
+        { "id": "29", "answer": "A", "score": 1.5 },
+        { "id": "30", "answer": "B", "score": 1.5 },
+        { "id": "31", "answer": "B", "score": 1.5 },
+        { "id": "32", "answer": "C", "score": 3 },
+        { "id": "33", "answer": "B", "score": 3 },
+        { "id": "34", "answer": "A", "score": 3 }
+      ]
+    }
+  },
+  {
+    "5": {
+      "name": "三、完善程序（第一题 枚举因数）",
+      "answers": [
+        { "id": "35", "answer": "A", "score": 3 },
+        { "id": "36", "answer": "B", "score": 3 },
+        { "id": "37", "answer": "C", "score": 3 },
+        { "id": "38", "answer": "D", "score": 3 },
+        { "id": "39", "answer": "A", "score": 3 }
+      ]
+    }
+  },
+  {
+    "6": {
+      "name": "三、完善程序（第二题 洪水填充）",
+      "answers": [
+        { "id": "40", "answer": "A", "score": 3 },
+        { "id": "41", "answer": "B", "score": 3 },
+        { "id": "42", "answer": "C", "score": 3 },
+        { "id": "43", "answer": "D", "score": 3 },
+        { "id": "44", "answer": "A", "score": 3 }
+      ]
+    }
+  }
+]

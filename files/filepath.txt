@@ -201,6 +201,11 @@ cpp\races\csp-js\J\2024-J1.md
 cpp\races\csp-js\J\2025-J1.md
 cpp\races\csp-js\J\assets\2019-J1.json
 cpp\races\csp-js\J\assets\2020-J1.json
+cpp\races\csp-js\J\assets\2021-J1.json
+cpp\races\csp-js\J\assets\2022-J1.json
+cpp\races\csp-js\J\assets\2023-J1.json
+cpp\races\csp-js\J\assets\2024-J1.json
+cpp\races\csp-js\J\assets\2025-J1.json
 cpp\races\csp-js\J\assets\image-20260811105707210.png
 cpp\races\csp-js\J\assets\image-20260827092724905.png
 cpp\races\csp-js\J\assets\image-20260827093712318.png
@@ -211,6 +216,7 @@ cpp\races\csp-js\J\assets\image-20260829092533384.png
 cpp\races\csp-js\J\assets\image-20260829093335085.png
 cpp\races\csp-js\J\assets\image-20260829093612542.png
 cpp\races\csp-js\J\assets\image-20260829094042590.png
+cpp\races\csp-js\J\assets\image-20260829110155879.png
 cpp\races\csp-js\S\2019-S.md
 cpp\races\csp-js\S\2020-S.md
 cpp\races\csp-js\S\2021-S.md
