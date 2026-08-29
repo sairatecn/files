@@ -1,0 +1,87 @@
+[
+  {
+    "1": {
+      "name": "一、单项选择题",
+      "answers": [
+        { "id": "1", "answer": "A", "score": 2 },
+        { "id": "2", "answer": "D", "score": 2 },
+        { "id": "3", "answer": "C", "score": 2 },
+        { "id": "4", "answer": "A", "score": 2 },
+        { "id": "5", "answer": "A", "score": 2 },
+        { "id": "6", "answer": "D", "score": 2 },
+        { "id": "7", "answer": "C", "score": 2 },
+        { "id": "8", "answer": "C", "score": 2 },
+        { "id": "9", "answer": "B", "score": 2 },
+        { "id": "10", "answer": "C", "score": 2 },
+        { "id": "11", "answer": "C", "score": 2 },
+        { "id": "12", "answer": "A", "score": 2 },
+        { "id": "13", "answer": "C", "score": 2 },
+        { "id": "14", "answer": "B", "score": 2 },
+        { "id": "15", "answer": "A", "score": 2 }
+      ]
+    }
+  },
+  {
+    "2": {
+      "name": "二、阅读程序（第一题）",
+      "answers": [
+        { "id": "1", "answer": "B", "score": 1.5 },
+        { "id": "2", "answer": "A", "score": 1.5 },
+        { "id": "3", "answer": "B", "score": 1.5 },
+        { "id": "4", "answer": "A", "score": 1.5 },
+        { "id": "5", "answer": "B", "score": 3 },
+        { "id": "6", "answer": "B", "score": 3 }
+      ]
+    }
+  },
+  {
+    "3": {
+      "name": "二、阅读程序（第二题）",
+      "answers": [
+        { "id": "1", "answer": "A", "score": 1.5 },
+        { "id": "2", "answer": "B", "score": 1.5 },
+        { "id": "3", "answer": "B", "score": 1.5 },
+        { "id": "4", "answer": "B", "score": 1.5 },
+        { "id": "5", "answer": "A", "score": 3 },
+        { "id": "6", "answer": "A", "score": 3 }
+      ]
+    }
+  },
+  {
+    "4": {
+      "name": "二、阅读程序（第三题）",
+      "answers": [
+        { "id": "1", "answer": "B", "score": 1.5 },
+        { "id": "2", "answer": "A", "score": 1.5 },
+        { "id": "3", "answer": "A", "score": 3 },
+        { "id": "4", "answer": "D", "score": 3 },
+        { "id": "5", "answer": "D", "score": 3 },
+        { "id": "6", "answer": "B", "score": 3 }
+      ]
+    }
+  },
+  {
+    "5": {
+      "name": "三、完善程序（第一题）",
+      "answers": [
+        { "id": "1", "answer": "C", "score": 3 },
+        { "id": "2", "answer": "D", "score": 3 },
+        { "id": "3", "answer": "B", "score": 3 },
+        { "id": "4", "answer": "B", "score": 3 },
+        { "id": "5", "answer": "B", "score": 3 }
+      ]
+    }
+  },
+  {
+    "6": {
+      "name": "三、完善程序（第二题）",
+      "answers": [
+        { "id": "1", "answer": "B", "score": 3 },
+        { "id": "2", "answer": "D", "score": 3 },
+        { "id": "3", "answer": "C", "score": 3 },
+        { "id": "4", "answer": "A", "score": 3 },
+        { "id": "5", "answer": "B", "score": 3 }
+      ]
+    }
+  }
+]
