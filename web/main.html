@@ -23,7 +23,7 @@
     <!-- ====== 内联关键CSS ====== -->
     <style>
         /* ============================================================
-                   0. 全局变量 & 主题（同原有，保留完整）
+                   0. 全局变量 & 主题（与您最终版本一致，此处保留完整）
                    ============================================================ */
         :root {
             --bg-app: #f6f8fa;
@@ -1171,7 +1171,7 @@
         }
 
         /* ============================================================
-                   ★★★ 答题面板（修改：更小巧、复位居中） ★★★
+                   ★★★ 答题面板（更小巧 + 复位居中） ★★★
                    ============================================================ */
         #examPanel {
             position: fixed;
@@ -1182,10 +1182,10 @@
             border-radius: 16px;
             border: 1px solid var(--panel-border);
             box-shadow: var(--panel-shadow);
-            padding: 14px 16px 12px 16px;   /* 减小内边距 */
+            padding: 14px 16px 12px 16px;
             max-width: 92vw;
             max-height: 85vh;
-            width: 420px;                   /* 原580px → 420px，更小巧 */
+            width: 420px;
             display: none;
             flex-direction: column;
             overflow: hidden;
@@ -1685,7 +1685,7 @@
         </main>
     </div>
 
-    <!-- ====== 答题面板（新增） ====== -->
+    <!-- ====== 答题面板 ====== -->
     <div id="examPanel">
         <div class="panel-header" id="panelDragHandle">
             <h3><i class="fas fa-clipboard-list"></i> 答题卡</h3>
@@ -2401,8 +2401,9 @@
         const downloadBtn = document.getElementById('downloadBtn');
         const printBtn = document.getElementById('printBtn');
 
-        // ====== 面板相关状态 ======
-        let currentExamData = null;
+        // ====== 面板相关状态（新增缓存支持） ======
+        let currentExamData = null; // 当前试卷原始JSON
+        let currentExamPath = ''; // 当前试卷唯一标识（文件路径）
         let examPanelVisible = false;
         let panelSubmited = false;
         const examPanel = document.getElementById('examPanel');
@@ -2414,6 +2415,56 @@
         const panelScoreNum = document.getElementById('panelScoreNum');
         const panelScoreTotal = document.getElementById('panelScoreTotal');
         const examPanelBtn = document.getElementById('examPanelBtn');
+
+        // 缓存键前缀
+        const CACHE_KEY_PREFIX = 'exam_answers_';
+
+        /** 获取当前试卷的缓存键 */
+        function getCacheKey() {
+            return currentExamPath ? CACHE_KEY_PREFIX + currentExamPath : null;
+        }
+
+        /** 保存答案到 localStorage */
+        function saveAnswersToCache() {
+            if (!currentExamPath) return;
+            const inputs = panelBody.querySelectorAll('.exam-question .q-input');
+            const data = {};
+            inputs.forEach(inp => {
+                const qid = inp.closest('.exam-question').dataset.qid;
+                data[qid] = inp.value;
+            });
+            try {
+                localStorage.setItem(getCacheKey(), JSON.stringify(data));
+            } catch (e) { /* ignore */ }
+        }
+
+        /** 从缓存恢复答案 */
+        function restoreAnswersFromCache() {
+            if (!currentExamPath) return;
+            const key = getCacheKey();
+            if (!key) return;
+            try {
+                const raw = localStorage.getItem(key);
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                panelBody.querySelectorAll('.exam-question').forEach(el => {
+                    const qid = el.dataset.qid;
+                    if (data[qid] !== undefined) {
+                        const input = el.querySelector('.q-input');
+                        if (input) input.value = data[qid];
+                    }
+                });
+            } catch (e) { /* ignore */ }
+        }
+
+        /** 清空当前试卷的缓存 */
+        function clearCacheForCurrent() {
+            if (currentExamPath) {
+                try {
+                    localStorage.removeItem(getCacheKey());
+                } catch (e) { /* ignore */ }
+            }
+        }
 
         function updateActionButtons(loaded, printable = true) {
             isFileLoaded = loaded;
@@ -2547,7 +2598,7 @@
         }
 
         // ================================================================
-        // ★★★ 答题面板核心逻辑 ★★★
+        // ★★★ 答题面板核心逻辑（含缓存） ★★★
         // ================================================================
 
         /** 解析试卷JSON数据 */
@@ -2575,7 +2626,7 @@
             return sections;
         }
 
-        /** 生成面板HTML */
+        /** 生成面板HTML，并绑定 qid 用于缓存 */
         function renderPanelContent(sections) {
             if (!sections || sections.length === 0) {
                 return `<div style="padding:20px;text-align:center;color:var(--text-secondary);">无题目数据</div>`;
@@ -2599,7 +2650,7 @@
                     questionIndex++;
                     const qId = q.id || String(questionIndex);
                     html += `
-                        <div class="exam-question" data-section="${escapeHtml(sec.id)}" data-qid="${escapeHtml(qId)}" data-answer="${escapeHtml(q.answer)}" data-score="${q.score}">
+                        <div class="exam-question" data-qid="${escapeHtml(qId)}" data-answer="${escapeHtml(q.answer)}" data-score="${q.score}">
                             <span class="q-label">${escapeHtml(qId)}.</span>
                             <input class="q-input" type="text" placeholder="答案" autocomplete="off" spellcheck="false" />
                             <span class="q-result"></span>
@@ -2612,6 +2663,17 @@
 
             panelScoreTotal.textContent = totalScore;
             return html;
+        }
+
+        /** 从面板收集当前答案数据（用于缓存） */
+        function collectAnswers() {
+            const inputs = panelBody.querySelectorAll('.exam-question .q-input');
+            const data = {};
+            inputs.forEach(inp => {
+                const qid = inp.closest('.exam-question').dataset.qid;
+                data[qid] = inp.value;
+            });
+            return data;
         }
 
         /** 面板居中（复位） */
@@ -2627,11 +2689,10 @@
             examPanel.style.top = top + 'px';
             examPanel.style.width = maxW + 'px';
             examPanel.style.maxHeight = maxH + 'px';
-            // 清除可能的transform偏移
             examPanel.style.transform = 'none';
         }
 
-        /** 显示/隐藏面板（打开时强制居中） */
+        /** 显示/隐藏面板（只控制可见性，不重新渲染） */
         function toggleExamPanel(show) {
             if (show === undefined) {
                 examPanelVisible = !examPanelVisible;
@@ -2642,19 +2703,18 @@
             if (examPanelVisible) {
                 examPanel.classList.remove('hidden-panel');
                 examPanel.style.display = 'flex';
-                // 强制居中复位
                 centerPanel();
                 examPanel.classList.add('visible');
                 examPanelBtn.classList.add('panel-active');
-                panelSubmited = false;
-                panelScoreDisplay.style.display = 'none';
-                panelBody.querySelectorAll('.q-input').forEach(inp => inp.disabled = false);
-                panelBody.querySelectorAll('.q-result').forEach(el => el.textContent = '');
-                panelSubmitBtn.disabled = false;
-                panelResetBtn.disabled = false;
-                const firstInput = panelBody.querySelector('.q-input');
-                if (firstInput) setTimeout(() => firstInput.focus(), 100);
+                // 如果有缓存，恢复（但如果已经提交，不覆盖提交状态）
+                if (!panelSubmited) {
+                    restoreAnswersFromCache();
+                }
             } else {
+                // 隐藏前保存当前答案到缓存（如果未提交）
+                if (!panelSubmited) {
+                    saveAnswersToCache();
+                }
                 examPanel.classList.remove('visible');
                 examPanel.classList.add('hidden-panel');
                 setTimeout(() => {
@@ -2664,7 +2724,209 @@
             }
         }
 
-        /** 面板拖拽逻辑（保留，但打开时强制居中会覆盖拖拽位置） */
+        /** 重置面板内容（切换试卷时调用） */
+        function resetPanelForNewExam() {
+            // 清空面板DOM
+            panelBody.innerHTML = '';
+            panelScoreDisplay.style.display = 'none';
+            panelSubmitBtn.disabled = false;
+            panelResetBtn.disabled = false;
+            panelSubmited = false;
+            panelScoreNum.textContent = '0';
+            // 如果面板可见则隐藏
+            if (examPanelVisible) toggleExamPanel(false);
+            // 清除旧缓存（但保留当前试卷的缓存，以便切换回来恢复）
+            // 这里不清除，因为切换回来还要用
+        }
+
+        /** 加载试卷数据并准备面板（但不显示） */
+        function loadExamPanel(jsonData) {
+            const sections = parseExamData(jsonData);
+            if (sections.length === 0) {
+                examPanelBtn.style.display = 'none';
+                examPanelBtn.disabled = true;
+                currentExamData = null;
+                currentExamPath = '';
+                resetPanelForNewExam();
+                return;
+            }
+            currentExamData = jsonData;
+            // 生成HTML
+            panelBody.innerHTML = renderPanelContent(sections);
+            // 恢复缓存（如果有）
+            restoreAnswersFromCache();
+            // 显示按钮
+            examPanelBtn.style.display = 'inline-flex';
+            examPanelBtn.disabled = false;
+            // 重置提交状态（但保留输入）
+            panelSubmited = false;
+            panelScoreDisplay.style.display = 'none';
+            panelSubmitBtn.disabled = false;
+            panelResetBtn.disabled = false;
+            // 启用所有输入
+            panelBody.querySelectorAll('.q-input').forEach(inp => inp.disabled = false);
+            panelBody.querySelectorAll('.q-result').forEach(el => el.textContent = '');
+            panelScoreNum.textContent = '0';
+        }
+
+        /** 尝试加载JSON试卷 */
+        async function tryLoadExam(mdPath, mdName) {
+            const pureName = extractPureName(mdName);
+            if (!pureName) {
+                hideExamButton();
+                return;
+            }
+
+            const dir = mdPath.substring(0, mdPath.lastIndexOf('/'));
+            const jsonPath = dir ? `${dir}/assets/${pureName}.json` : `assets/${pureName}.json`;
+            const jsonUrl = toCdnUrl(jsonPath) + '?' + getCacheBuster();
+
+            try {
+                const resp = await fetch(jsonUrl, { cache: 'reload' });
+                if (!resp.ok) {
+                    const fallbackPath = `assets/${pureName}.json`;
+                    const fallbackUrl = toCdnUrl(fallbackPath) + '?' + getCacheBuster();
+                    const resp2 = await fetch(fallbackUrl, { cache: 'reload' });
+                    if (!resp2.ok) {
+                        hideExamButton();
+                        return;
+                    }
+                    const data = await resp2.json();
+                    // 设置当前路径标识
+                    currentExamPath = mdPath;
+                    loadExamPanel(data);
+                    return;
+                }
+                const data = await resp.json();
+                currentExamPath = mdPath;
+                loadExamPanel(data);
+            } catch (err) {
+                console.warn('[试卷] 加载JSON失败:', err);
+                hideExamButton();
+            }
+        }
+
+        function hideExamButton() {
+            examPanelBtn.style.display = 'none';
+            examPanelBtn.disabled = true;
+            currentExamData = null;
+            currentExamPath = '';
+            if (examPanelVisible) toggleExamPanel(false);
+            // 不主动清空面板内容，但重置状态
+            resetPanelForNewExam();
+        }
+
+        // ====== 面板事件绑定 ======
+        examPanelBtn.addEventListener('click', () => {
+            if (!currentExamData) {
+                if (currentFilePath && currentFileName) {
+                    tryLoadExam(currentFilePath, currentFileName);
+                }
+                return;
+            }
+            // 切换可见性
+            toggleExamPanel();
+            // 如果刚打开，确保居中
+            if (examPanelVisible) {
+                centerPanel();
+                // 如果未提交，恢复缓存（以防其他操作修改了输入）
+                if (!panelSubmited) {
+                    restoreAnswersFromCache();
+                }
+            }
+        });
+
+        panelCloseBtn.addEventListener('click', () => {
+            toggleExamPanel(false);
+        });
+
+        /** 提交答案 */
+        function submitAnswers() {
+            if (panelSubmited) return;
+            const questions = panelBody.querySelectorAll('.exam-question');
+            let totalCorrect = 0;
+            let totalScore = 0;
+            let hasEmpty = false;
+
+            questions.forEach(el => {
+                const input = el.querySelector('.q-input');
+                const resultEl = el.querySelector('.q-result');
+                const correctAnswer = el.dataset.answer || '';
+                const score = Number(el.dataset.score) || 0;
+                const userAnswer = (input.value || '').trim();
+
+                if (!userAnswer) {
+                    hasEmpty = true;
+                    resultEl.textContent = '⚠️';
+                    resultEl.className = 'q-result wrong';
+                    input.disabled = true;
+                    return;
+                }
+
+                const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+                if (isCorrect) {
+                    totalCorrect++;
+                    totalScore += score;
+                    resultEl.textContent = '✅';
+                    resultEl.className = 'q-result correct';
+                } else {
+                    resultEl.textContent = '❌';
+                    resultEl.className = 'q-result wrong';
+                }
+                input.disabled = true;
+            });
+
+            if (hasEmpty) {
+                // 提示但不阻止
+            }
+
+            panelScoreNum.textContent = totalScore;
+            panelScoreDisplay.style.display = 'flex';
+            panelSubmitBtn.disabled = true;
+            panelSubmited = true;
+            panelBody.querySelectorAll('.q-input').forEach(inp => inp.disabled = true);
+            // 提交后保存缓存（保留答案）
+            saveAnswersToCache();
+        }
+
+        /** 重置答题（清空答案和缓存） */
+        function resetAnswers() {
+            panelBody.querySelectorAll('.exam-question').forEach(el => {
+                const input = el.querySelector('.q-input');
+                const resultEl = el.querySelector('.q-result');
+                input.value = '';
+                input.disabled = false;
+                resultEl.textContent = '';
+                resultEl.className = 'q-result';
+            });
+            panelScoreDisplay.style.display = 'none';
+            panelSubmitBtn.disabled = false;
+            panelSubmited = false;
+            panelScoreNum.textContent = '0';
+            // 清除缓存
+            clearCacheForCurrent();
+            // 保存空数据
+            saveAnswersToCache();
+            const firstInput = panelBody.querySelector('.q-input');
+            if (firstInput) setTimeout(() => firstInput.focus(), 50);
+        }
+
+        panelSubmitBtn.addEventListener('click', submitAnswers);
+        panelResetBtn.addEventListener('click', resetAnswers);
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                if (examPanelVisible && !panelSubmited) {
+                    e.preventDefault();
+                    submitAnswers();
+                }
+            }
+            if (e.key === 'Escape' && examPanelVisible) {
+                toggleExamPanel(false);
+            }
+        });
+
+        // ====== 面板拖拽 ======
         let dragState = null;
 
         function initPanelDrag() {
@@ -2722,175 +2984,6 @@
             icon.addEventListener('mousedown', onStart);
             icon.addEventListener('touchstart', onStart, { passive: false });
         }
-
-        /** 提交答案 */
-        function submitAnswers() {
-            if (panelSubmited) return;
-            const questions = panelBody.querySelectorAll('.exam-question');
-            let totalCorrect = 0;
-            let totalScore = 0;
-            let hasEmpty = false;
-
-            questions.forEach(el => {
-                const input = el.querySelector('.q-input');
-                const resultEl = el.querySelector('.q-result');
-                const correctAnswer = el.dataset.answer || '';
-                const score = Number(el.dataset.score) || 0;
-                const userAnswer = (input.value || '').trim();
-
-                if (!userAnswer) {
-                    hasEmpty = true;
-                    resultEl.textContent = '⚠️';
-                    resultEl.className = 'q-result wrong';
-                    input.disabled = true;
-                    return;
-                }
-
-                const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
-                if (isCorrect) {
-                    totalCorrect++;
-                    totalScore += score;
-                    resultEl.textContent = '✅';
-                    resultEl.className = 'q-result correct';
-                } else {
-                    resultEl.textContent = '❌';
-                    resultEl.className = 'q-result wrong';
-                }
-                input.disabled = true;
-            });
-
-            if (hasEmpty) {
-                // 允许提交但提示
-            }
-
-            panelScoreNum.textContent = totalScore;
-            panelScoreDisplay.style.display = 'flex';
-            panelSubmitBtn.disabled = true;
-            panelSubmited = true;
-            panelBody.querySelectorAll('.q-input').forEach(inp => inp.disabled = true);
-        }
-
-        /** 重置答题 */
-        function resetAnswers() {
-            panelBody.querySelectorAll('.exam-question').forEach(el => {
-                const input = el.querySelector('.q-input');
-                const resultEl = el.querySelector('.q-result');
-                input.value = '';
-                input.disabled = false;
-                resultEl.textContent = '';
-                resultEl.className = 'q-result';
-            });
-            panelScoreDisplay.style.display = 'none';
-            panelSubmitBtn.disabled = false;
-            panelSubmited = false;
-            panelScoreNum.textContent = '0';
-            const firstInput = panelBody.querySelector('.q-input');
-            if (firstInput) setTimeout(() => firstInput.focus(), 50);
-        }
-
-        /** 加载试卷数据并显示面板 */
-        function loadExamPanel(jsonData) {
-            const sections = parseExamData(jsonData);
-            if (sections.length === 0) {
-                examPanelBtn.style.display = 'none';
-                examPanelBtn.disabled = true;
-                currentExamData = null;
-                return;
-            }
-            currentExamData = jsonData;
-            panelBody.innerHTML = renderPanelContent(sections);
-            examPanelBtn.style.display = 'inline-flex';
-            examPanelBtn.disabled = false;
-        }
-
-        /** 尝试加载JSON试卷 */
-        async function tryLoadExam(mdPath, mdName) {
-            const pureName = extractPureName(mdName);
-            if (!pureName) {
-                hideExamButton();
-                return;
-            }
-
-            const dir = mdPath.substring(0, mdPath.lastIndexOf('/'));
-            const jsonPath = dir ? `${dir}/assets/${pureName}.json` : `assets/${pureName}.json`;
-            const jsonUrl = toCdnUrl(jsonPath) + '?' + getCacheBuster();
-
-            try {
-                const resp = await fetch(jsonUrl, { cache: 'reload' });
-                if (!resp.ok) {
-                    const fallbackPath = `assets/${pureName}.json`;
-                    const fallbackUrl = toCdnUrl(fallbackPath) + '?' + getCacheBuster();
-                    const resp2 = await fetch(fallbackUrl, { cache: 'reload' });
-                    if (!resp2.ok) {
-                        hideExamButton();
-                        return;
-                    }
-                    const data = await resp2.json();
-                    loadExamPanel(data);
-                    return;
-                }
-                const data = await resp.json();
-                loadExamPanel(data);
-            } catch (err) {
-                console.warn('[试卷] 加载JSON失败:', err);
-                hideExamButton();
-            }
-        }
-
-        function hideExamButton() {
-            examPanelBtn.style.display = 'none';
-            examPanelBtn.disabled = true;
-            currentExamData = null;
-            if (examPanelVisible) toggleExamPanel(false);
-        }
-
-        // ====== 面板事件绑定 ======
-        examPanelBtn.addEventListener('click', () => {
-            if (!currentExamData) {
-                if (currentFilePath && currentFileName) {
-                    tryLoadExam(currentFilePath, currentFileName);
-                }
-                return;
-            }
-            toggleExamPanel();
-            if (examPanelVisible) {
-                const sections = parseExamData(currentExamData);
-                panelBody.innerHTML = renderPanelContent(sections);
-                panelSubmited = false;
-                panelScoreDisplay.style.display = 'none';
-                panelSubmitBtn.disabled = false;
-                panelResetBtn.disabled = false;
-                panelBody.querySelectorAll('.q-input').forEach(inp => inp.disabled = false);
-                panelBody.querySelectorAll('.q-result').forEach(el => el.textContent = '');
-                panelScoreNum.textContent = '0';
-                const total = panelBody.querySelectorAll('.exam-question');
-                let totalScore = 0;
-                total.forEach(el => { totalScore += Number(el.dataset.score) || 0; });
-                panelScoreTotal.textContent = totalScore;
-                // 强制居中
-                centerPanel();
-            }
-        });
-
-        panelCloseBtn.addEventListener('click', () => toggleExamPanel(false));
-
-        panelSubmitBtn.addEventListener('click', submitAnswers);
-
-        panelResetBtn.addEventListener('click', resetAnswers);
-
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                if (examPanelVisible && !panelSubmited) {
-                    e.preventDefault();
-                    submitAnswers();
-                }
-            }
-            if (e.key === 'Escape' && examPanelVisible) {
-                toggleExamPanel(false);
-            }
-        });
-
-        // 初始化面板拖拽
         initPanelDrag();
 
         // ====== 窗口变化时复位面板 ======
@@ -2917,7 +3010,28 @@
             `<div class="preview-loading"><i class="fas fa-spinner fa-pulse"></i> 加载中...</div>`;
             filePathDisplay.innerHTML = `<i class="fas fa-file-alt"></i><span>${escapeHtml(fileName)}</span>`;
             updateActionButtons(false);
-            hideExamButton();
+
+            // 如果切换了试卷，重置面板状态（但保留当前试卷的缓存以备切换回来）
+            if (currentExamPath && currentExamPath !== relativePath) {
+                // 保存当前答案（未提交时）
+                if (!panelSubmited && examPanelVisible) {
+                    saveAnswersToCache();
+                }
+                // 隐藏面板
+                if (examPanelVisible) toggleExamPanel(false);
+                // 清空面板内容（但保留缓存数据）
+                panelBody.innerHTML = '';
+                panelScoreDisplay.style.display = 'none';
+                panelSubmitBtn.disabled = false;
+                panelResetBtn.disabled = false;
+                panelSubmited = false;
+                panelScoreNum.textContent = '0';
+                // 清除当前试卷引用
+                currentExamPath = '';
+                currentExamData = null;
+                examPanelBtn.style.display = 'none';
+                examPanelBtn.disabled = true;
+            }
 
             try {
                 await Promise.all([
@@ -2935,6 +3049,7 @@
                 currentFilePath = relativePath;
                 currentFileUrl = fileUrl;
 
+                // 加载试卷（会自动设置 currentExamPath）
                 await tryLoadExam(relativePath, fileName);
 
                 const { processed, mathMap } = preprocessMath(mdText);
@@ -3002,6 +3117,7 @@
             previewBody.style.opacity = '0';
             previewBody.innerHTML = '';
             previewBody.classList.remove('preview-full');
+            // 非MD文件隐藏面板
             hideExamButton();
 
             if (['mp4', 'webm', 'ogg'].includes(ext)) {
@@ -3316,7 +3432,7 @@
         `;
         document.head.appendChild(printStyle);
 
-        console.log('✅ SAIRATE文件库已启动（带行号 + 复制按钮 + 答题面板 + 小巧复位）');
+        console.log('✅ SAIRATE文件库已启动（带答案缓存与试卷切换保留）');
     </script>
 </body>
 </html>
