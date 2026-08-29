@@ -2586,10 +2586,10 @@
                         indicator.classList.toggle('open', isHidden);
                     }
                     if (isHidden) {
-                        body.querySelectorAll('img').forEach(img => { if (img.dataset.src) img.src = img.dataset
-                                .src; });
+                        body.querySelectorAll('img').forEach(img => { if (img.dataset.src) img.src = img.dataset.src; });
                     }
-                    window.dispatchEvent(new Event('resize'));
+                    // 删掉下面这一行，不再触发全局 resize
+                    // window.dispatchEvent(new Event('resize'));
                 });
                 wrapper.appendChild(header);
                 wrapper.appendChild(body);
@@ -2934,7 +2934,15 @@
             const icon = document.getElementById('panelDragHandleIcon');
 
             function onStart(e) {
-                if (e.target.closest('.panel-close') || e.target.closest('button')) return;
+                // ★ 关键：如果点击发生在面板内容区域（.panel-body）内，忽略
+                if (e.target.closest('.panel-body')) {
+                    return;
+                }
+                // 点击关闭按钮或其他按钮也不启动拖拽
+                if (e.target.closest('.panel-close') || e.target.closest('button')) {
+                    return;
+                }
+
                 const rect = examPanel.getBoundingClientRect();
                 const clientX = e.clientX || e.touches?.[0]?.clientX || 0;
                 const clientY = e.clientY || e.touches?.[0]?.clientY || 0;
@@ -2979,8 +2987,10 @@
                 document.removeEventListener('touchend', onEnd);
             }
 
+            // 整个头部都可拖拽（包括标题、图标、空白处）
             handle.addEventListener('mousedown', onStart);
             handle.addEventListener('touchstart', onStart, { passive: false });
+            // 拖拽手柄图标同样绑定（也可不要，但保留无妨）
             icon.addEventListener('mousedown', onStart);
             icon.addEventListener('touchstart', onStart, { passive: false });
         }
