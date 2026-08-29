@@ -23,7 +23,7 @@
     <!-- ====== 内联关键CSS ====== -->
     <style>
         /* ============================================================
-                   0. 全局变量 & 主题
+                   0. 全局变量 & 主题（同原有，保留完整）
                    ============================================================ */
         :root {
             --bg-app: #f6f8fa;
@@ -59,7 +59,6 @@
             --line-number-border: #30363d;
             --code-block-header-bg: #161b22;
             --copy-btn-hover: #30363d;
-            /* 面板专用 */
             --panel-bg: rgba(255, 255, 255, 0.12);
             --panel-border: rgba(255, 255, 255, 0.25);
             --panel-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
@@ -149,7 +148,7 @@
         }
 
         /* ============================================================
-                   1. 基础重置 & 布局（同原有）
+                   1. 基础重置 & 布局（同原有，略）
                    ============================================================ */
         * {
             box-sizing: border-box;
@@ -214,7 +213,6 @@
             color: var(--text-primary);
         }
 
-        /* ====== 加载面板 ====== */
         .loading-panel {
             display: flex;
             flex-direction: column;
@@ -390,7 +388,7 @@
             font-size: 18px;
         }
 
-        /* ====== 文件树（同原有） ====== */
+        /* ====== 文件树（同原有，略） ====== */
         .tree-node {
             list-style: none;
             padding-left: 0;
@@ -569,7 +567,6 @@
         .action-btn .label {
             font-size: 13px;
         }
-        /* 面板按钮特殊样式（激活时高亮） */
         .action-btn.panel-active {
             background: var(--panel-correct);
             box-shadow: 0 0 0 2px var(--panel-correct), 0 0 12px rgba(63, 185, 80, 0.3);
@@ -1174,63 +1171,144 @@
         }
 
         /* ============================================================
-                   ★★★ 答题面板（新增） ★★★
+                   ★★★ 答题面板（修改：更小巧、复位居中） ★★★
                    ============================================================ */
-
-
-        /* 章节分组 */
-        .exam-section {
-            margin-bottom: 16px;
-            padding: 12px 14px;
-            background: var(--panel-score-bg);
-            border-radius: 12px;
-            border-left: 3px solid var(--active-text);
+        #examPanel {
+            position: fixed;
+            z-index: 10000;
+            background: var(--panel-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 16px;
+            border: 1px solid var(--panel-border);
+            box-shadow: var(--panel-shadow);
+            padding: 14px 16px 12px 16px;   /* 减小内边距 */
+            max-width: 92vw;
+            max-height: 85vh;
+            width: 420px;                   /* 原580px → 420px，更小巧 */
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            touch-action: none;
         }
-        .exam-section-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
+        #examPanel.visible {
+            display: flex;
+            opacity: 1;
+            transform: scale(1);
+        }
+        #examPanel.hidden-panel {
+            opacity: 0;
+            transform: scale(0.96);
+            pointer-events: none;
+        }
+        #examPanel .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 10px;
+            flex-shrink: 0;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        #examPanel .panel-header:active {
+            cursor: grabbing;
+        }
+        #examPanel .panel-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 8px;
         }
+        #examPanel .panel-header h3 i {
+            color: var(--icon-active);
+            font-size: 18px;
+        }
+        #examPanel .panel-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 22px;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1;
+        }
+        #examPanel .panel-close:hover {
+            background: var(--hover-bg);
+            color: var(--text-primary);
+        }
+        #examPanel .panel-body {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 2px;
+            margin-bottom: 8px;
+        }
+        #examPanel .panel-body::-webkit-scrollbar {
+            width: 4px;
+        }
+        #examPanel .panel-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #examPanel .panel-body::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border-radius: 4px;
+        }
+
+        .exam-section {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: var(--panel-score-bg);
+            border-radius: 10px;
+            border-left: 3px solid var(--active-text);
+        }
+        .exam-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
         .exam-section-title .section-badge {
-            font-size: 12px;
+            font-size: 11px;
             background: var(--active-bg);
             color: var(--active-text);
-            padding: 0 10px;
+            padding: 0 8px;
             border-radius: 20px;
             font-weight: 400;
         }
-
-        /* 单个题目 */
         .exam-question {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 4px 0;
-            font-size: 14px;
+            gap: 6px;
+            padding: 2px 0;
+            font-size: 13px;
             color: var(--text-primary);
         }
         .exam-question .q-label {
             font-weight: 500;
-            min-width: 32px;
+            min-width: 28px;
             color: var(--text-secondary);
-            font-size: 13px;
+            font-size: 12px;
         }
         .exam-question .q-input {
-            flex: 1;
-            padding: 4px 10px;
+            flex: 0 1 60px;
+            padding: 2px 6px;
             border: 1px solid var(--panel-input-border);
-            border-radius: 6px;
+            border-radius: 4px;
             background: var(--panel-input-bg);
             color: var(--text-primary);
-            font-size: 14px;
+            font-size: 13px;
             font-family: var(--font-family);
             transition: border-color 0.2s, box-shadow 0.2s;
-            min-width: 40px;
-            max-width: 120px;
+            min-width: 36px;
+            max-width: 80px;
             outline: none;
         }
         .exam-question .q-input:focus {
@@ -1242,8 +1320,8 @@
             cursor: not-allowed;
         }
         .exam-question .q-result {
-            font-size: 16px;
-            min-width: 24px;
+            font-size: 15px;
+            min-width: 22px;
             text-align: center;
         }
         .exam-question .q-result.correct {
@@ -1253,31 +1331,30 @@
             color: var(--panel-wrong);
         }
         .exam-question .q-score {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
-            min-width: 28px;
+            min-width: 24px;
             text-align: right;
         }
 
-        /* 面板底部：按钮 + 结果 */
         #examPanel .panel-footer {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
+            gap: 6px;
             flex-shrink: 0;
-            padding-top: 12px;
+            padding-top: 8px;
             border-top: 1px solid var(--panel-border);
         }
         #examPanel .panel-footer .btn-group {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
         #examPanel .panel-footer .btn-group .action-btn {
-            font-size: 13px;
-            padding: 5px 16px;
+            font-size: 12px;
+            padding: 4px 12px;
         }
         #examPanel .panel-footer .btn-group .action-btn:disabled {
             opacity: 0.5;
@@ -1290,31 +1367,30 @@
             background: var(--text-primary);
         }
         #examPanel .panel-footer .score-display {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-primary);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         #examPanel .panel-footer .score-display .score-num {
             color: var(--active-text);
-            font-size: 20px;
+            font-size: 18px;
         }
         #examPanel .panel-footer .score-display .score-total {
             color: var(--text-secondary);
             font-weight: 400;
         }
 
-        /* 面板拖拽把手 */
         #examPanel .drag-handle {
             cursor: grab;
             user-select: none;
             -webkit-user-select: none;
-            padding: 4px 8px;
+            padding: 2px 6px;
             border-radius: 6px;
             color: var(--text-secondary);
-            font-size: 16px;
+            font-size: 14px;
             transition: background 0.2s;
         }
         #examPanel .drag-handle:hover {
@@ -1324,39 +1400,39 @@
             cursor: grabbing;
         }
 
-        /* 移动端适配面板 */
+        /* 移动端适配 */
         @media (max-width: 720px) {
             #examPanel {
                 width: 94vw;
                 max-width: 94vw;
                 max-height: 82vh;
-                padding: 16px 16px 14px 16px;
-                border-radius: 16px;
+                padding: 12px 12px 10px 12px;
+                border-radius: 14px;
             }
             #examPanel .panel-header h3 {
-                font-size: 16px;
+                font-size: 15px;
             }
             .exam-question {
-                font-size: 13px;
-                gap: 6px;
+                font-size: 12px;
+                gap: 4px;
                 flex-wrap: wrap;
             }
             .exam-question .q-input {
-                max-width: 80px;
-                font-size: 13px;
-                padding: 3px 8px;
+                max-width: 60px;
+                font-size: 12px;
+                padding: 2px 4px;
             }
             .exam-question .q-label {
-                min-width: 28px;
-                font-size: 12px;
+                min-width: 24px;
+                font-size: 11px;
             }
             .exam-section {
-                padding: 10px 12px;
+                padding: 6px 10px;
             }
             #examPanel .panel-footer {
                 flex-direction: column;
                 align-items: stretch;
-                gap: 8px;
+                gap: 6px;
             }
             #examPanel .panel-footer .btn-group {
                 justify-content: center;
@@ -1370,11 +1446,11 @@
                 width: 96vw;
                 max-width: 96vw;
                 max-height: 80vh;
-                padding: 12px 12px 12px 12px;
+                padding: 10px 10px 8px 10px;
             }
             .exam-question .q-input {
-                max-width: 60px;
-                font-size: 12px;
+                max-width: 50px;
+                font-size: 11px;
             }
             .exam-section-title {
                 font-size: 13px;
@@ -1382,7 +1458,7 @@
         }
 
         /* ============================================================
-                   响应式（同原有）
+                   响应式（同原有，略）
                    ============================================================ */
         @media (max-width: 720px) {
             body {
@@ -1580,7 +1656,6 @@
                     <span>请从左侧选择一个文件</span>
                 </div>
                 <div class="preview-actions">
-                    <!-- ====== 新增：面板按钮 ====== -->
                     <button class="action-btn" id="examPanelBtn" disabled style="display:none;" title="打开答题面板">
                         <i class="fas fa-clipboard-list"></i>
                         <span class="label">面板</span>
@@ -1614,7 +1689,7 @@
     <div id="examPanel">
         <div class="panel-header" id="panelDragHandle">
             <h3><i class="fas fa-clipboard-list"></i> 答题卡</h3>
-            <div style="display:flex;align-items:center;gap:6px;">
+            <div style="display:flex;align-items:center;gap:4px;">
                 <span class="drag-handle" id="panelDragHandleIcon"><i class="fas fa-arrows-alt"></i></span>
                 <button class="panel-close" id="panelCloseBtn" title="关闭面板">✕</button>
             </div>
@@ -2327,7 +2402,7 @@
         const printBtn = document.getElementById('printBtn');
 
         // ====== 面板相关状态 ======
-        let currentExamData = null; // 当前试卷的JSON数据
+        let currentExamData = null;
         let examPanelVisible = false;
         let panelSubmited = false;
         const examPanel = document.getElementById('examPanel');
@@ -2477,9 +2552,6 @@
 
         /** 解析试卷JSON数据 */
         function parseExamData(jsonData) {
-            // 兼容两种格式：
-            // 格式1: [ { "1": { name, answers }, "2": { name, answers } } ]
-            // 格式2: [ { "1": { name, answers } }, { "2": { name, answers } } ]
             const sections = [];
             if (!Array.isArray(jsonData)) return sections;
 
@@ -2538,12 +2610,28 @@
                 html += `</div>`;
             }
 
-            // 存储总分
             panelScoreTotal.textContent = totalScore;
             return html;
         }
 
-        /** 显示/隐藏面板 */
+        /** 面板居中（复位） */
+        function centerPanel() {
+            const rect = examPanel.getBoundingClientRect();
+            const w = rect.width || 420;
+            const h = rect.height || 400;
+            const maxW = Math.min(w, window.innerWidth * 0.92);
+            const maxH = Math.min(h, window.innerHeight * 0.85);
+            const left = Math.max(10, (window.innerWidth - maxW) / 2);
+            const top = Math.max(10, (window.innerHeight - maxH) / 2);
+            examPanel.style.left = left + 'px';
+            examPanel.style.top = top + 'px';
+            examPanel.style.width = maxW + 'px';
+            examPanel.style.maxHeight = maxH + 'px';
+            // 清除可能的transform偏移
+            examPanel.style.transform = 'none';
+        }
+
+        /** 显示/隐藏面板（打开时强制居中） */
         function toggleExamPanel(show) {
             if (show === undefined) {
                 examPanelVisible = !examPanelVisible;
@@ -2554,19 +2642,16 @@
             if (examPanelVisible) {
                 examPanel.classList.remove('hidden-panel');
                 examPanel.style.display = 'flex';
-                // 让面板居中
+                // 强制居中复位
                 centerPanel();
                 examPanel.classList.add('visible');
                 examPanelBtn.classList.add('panel-active');
-                // 重置提交状态
                 panelSubmited = false;
                 panelScoreDisplay.style.display = 'none';
-                // 启用所有输入框
                 panelBody.querySelectorAll('.q-input').forEach(inp => inp.disabled = false);
                 panelBody.querySelectorAll('.q-result').forEach(el => el.textContent = '');
                 panelSubmitBtn.disabled = false;
                 panelResetBtn.disabled = false;
-                // 聚焦第一个输入框
                 const firstInput = panelBody.querySelector('.q-input');
                 if (firstInput) setTimeout(() => firstInput.focus(), 100);
             } else {
@@ -2579,20 +2664,7 @@
             }
         }
 
-        /** 面板居中 */
-        function centerPanel() {
-            const rect = examPanel.getBoundingClientRect();
-            const w = rect.width || 580;
-            const h = rect.height || 400;
-            const maxW = Math.min(w, window.innerWidth * 0.92);
-            const maxH = Math.min(h, window.innerHeight * 0.85);
-            examPanel.style.left = Math.max(10, (window.innerWidth - maxW) / 2) + 'px';
-            examPanel.style.top = Math.max(10, (window.innerHeight - maxH) / 2) + 'px';
-            examPanel.style.width = maxW + 'px';
-            examPanel.style.maxHeight = maxH + 'px';
-        }
-
-        /** 面板拖拽逻辑 */
+        /** 面板拖拽逻辑（保留，但打开时强制居中会覆盖拖拽位置） */
         let dragState = null;
 
         function initPanelDrag() {
@@ -2626,7 +2698,6 @@
                 const clientY = e.clientY || e.touches?.[0]?.clientY || 0;
                 let left = clientX - dragState.offsetX;
                 let top = clientY - dragState.offsetY;
-                // 边界限制
                 const maxLeft = window.innerWidth - dragState.width - 10;
                 const maxTop = window.innerHeight - dragState.height - 10;
                 left = Math.max(10, Math.min(left, maxLeft));
@@ -2689,19 +2760,13 @@
             });
 
             if (hasEmpty) {
-                // 有空的，提示但不阻止提交
-                // 但为了体验，我们提示用户
-                const allFilled = !hasEmpty;
-                if (!allFilled) {
-                    // 不阻止，但提示
-                }
+                // 允许提交但提示
             }
 
             panelScoreNum.textContent = totalScore;
             panelScoreDisplay.style.display = 'flex';
             panelSubmitBtn.disabled = true;
             panelSubmited = true;
-            // 禁用所有输入框（已经禁用了）
             panelBody.querySelectorAll('.q-input').forEach(inp => inp.disabled = true);
         }
 
@@ -2733,9 +2798,7 @@
                 return;
             }
             currentExamData = jsonData;
-            // 渲染内容
             panelBody.innerHTML = renderPanelContent(sections);
-            // 显示按钮
             examPanelBtn.style.display = 'inline-flex';
             examPanelBtn.disabled = false;
         }
@@ -2748,7 +2811,6 @@
                 return;
             }
 
-            // 构造JSON路径：与MD同目录下的 assets/ 文件夹
             const dir = mdPath.substring(0, mdPath.lastIndexOf('/'));
             const jsonPath = dir ? `${dir}/assets/${pureName}.json` : `assets/${pureName}.json`;
             const jsonUrl = toCdnUrl(jsonPath) + '?' + getCacheBuster();
@@ -2756,7 +2818,6 @@
             try {
                 const resp = await fetch(jsonUrl, { cache: 'reload' });
                 if (!resp.ok) {
-                    // 尝试根目录的assets
                     const fallbackPath = `assets/${pureName}.json`;
                     const fallbackUrl = toCdnUrl(fallbackPath) + '?' + getCacheBuster();
                     const resp2 = await fetch(fallbackUrl, { cache: 'reload' });
@@ -2780,14 +2841,12 @@
             examPanelBtn.style.display = 'none';
             examPanelBtn.disabled = true;
             currentExamData = null;
-            // 如果面板开着，关闭
             if (examPanelVisible) toggleExamPanel(false);
         }
 
         // ====== 面板事件绑定 ======
         examPanelBtn.addEventListener('click', () => {
             if (!currentExamData) {
-                // 尝试重新加载
                 if (currentFilePath && currentFileName) {
                     tryLoadExam(currentFilePath, currentFileName);
                 }
@@ -2795,7 +2854,6 @@
             }
             toggleExamPanel();
             if (examPanelVisible) {
-                // 重新渲染内容（确保最新）
                 const sections = parseExamData(currentExamData);
                 panelBody.innerHTML = renderPanelContent(sections);
                 panelSubmited = false;
@@ -2809,6 +2867,8 @@
                 let totalScore = 0;
                 total.forEach(el => { totalScore += Number(el.dataset.score) || 0; });
                 panelScoreTotal.textContent = totalScore;
+                // 强制居中
+                centerPanel();
             }
         });
 
@@ -2818,7 +2878,6 @@
 
         panelResetBtn.addEventListener('click', resetAnswers);
 
-        // 键盘快捷键：Ctrl+Enter 提交
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 if (examPanelVisible && !panelSubmited) {
@@ -2834,9 +2893,15 @@
         // 初始化面板拖拽
         initPanelDrag();
 
-        // 窗口变化时重新定位面板
-        window.addEventListener('resize', () => {
-            if (examPanelVisible) centerPanel();
+        // ====== 窗口变化时复位面板 ======
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            if (examPanelVisible) {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    centerPanel();
+                }, 150);
+            }
         });
 
         // ================================================================
@@ -2852,7 +2917,6 @@
             `<div class="preview-loading"><i class="fas fa-spinner fa-pulse"></i> 加载中...</div>`;
             filePathDisplay.innerHTML = `<i class="fas fa-file-alt"></i><span>${escapeHtml(fileName)}</span>`;
             updateActionButtons(false);
-            // 隐藏面板按钮
             hideExamButton();
 
             try {
@@ -2871,7 +2935,6 @@
                 currentFilePath = relativePath;
                 currentFileUrl = fileUrl;
 
-                // ====== 尝试加载同名JSON试卷 ======
                 await tryLoadExam(relativePath, fileName);
 
                 const { processed, mathMap } = preprocessMath(mdText);
@@ -2939,7 +3002,6 @@
             previewBody.style.opacity = '0';
             previewBody.innerHTML = '';
             previewBody.classList.remove('preview-full');
-            // 隐藏面板按钮
             hideExamButton();
 
             if (['mp4', 'webm', 'ogg'].includes(ext)) {
@@ -3254,7 +3316,7 @@
         `;
         document.head.appendChild(printStyle);
 
-        console.log('✅ SAIRATE文件库已启动（带行号 + 复制按钮 + 答题面板）');
+        console.log('✅ SAIRATE文件库已启动（带行号 + 复制按钮 + 答题面板 + 小巧复位）');
     </script>
 </body>
 </html>
