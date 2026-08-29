@@ -25,6 +25,8 @@ cpp\problems\GESP\一级\Python\202603_python_1.md
 cpp\problems\GESP\一级\Python\202606_python_1.md
 cpp\problems\GESP\一级\Python\assets\2a95683155bb65e587e5d1132d84d07ebed892c10d103cc61305cd6d586bb125.jpg
 cpp\problems\GESP\一级\Python\assets\image-20260828180529002.png
+cpp\problems\GESP\一级\Python\assets\image-20260828183614466.png
+cpp\problems\GESP\一级\Python\assets\image-20260828184539177.png
 cpp\problems\GESP\三级\春游.mp4
 cpp\problems\GESP\三级\春游python.mp4
 cpp\problems\Python启蒙\29多分支if-elif-else语句\例21.2判断整数位数.md
@@ -197,11 +199,17 @@ cpp\races\csp-js\J\2022-J1.md
 cpp\races\csp-js\J\2023-J1.md
 cpp\races\csp-js\J\2024-J1.md
 cpp\races\csp-js\J\2025-J1.md
+cpp\races\csp-js\J\assets\2019-J1.json
 cpp\races\csp-js\J\assets\image-20260811105707210.png
 cpp\races\csp-js\J\assets\image-20260827092724905.png
 cpp\races\csp-js\J\assets\image-20260827093712318.png
 cpp\races\csp-js\J\assets\image-20260827102207201.png
 cpp\races\csp-js\J\assets\image-20260827122355017.png
+cpp\races\csp-js\J\assets\image-20260829090450788.png
+cpp\races\csp-js\J\assets\image-20260829092533384.png
+cpp\races\csp-js\J\assets\image-20260829093335085.png
+cpp\races\csp-js\J\assets\image-20260829093612542.png
+cpp\races\csp-js\J\assets\image-20260829094042590.png
 cpp\races\csp-js\S\2019-S.md
 cpp\races\csp-js\S\2020-S.md
 cpp\races\csp-js\S\2021-S.md
