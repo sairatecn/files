@@ -1,0 +1,66 @@
+[
+  {
+    "1": {
+      "name": "一、单项选择题",
+      "answers": [
+        { "id": "1", "answer": "B", "score": 2 },
+        { "id": "2", "answer": "A", "score": 2 },
+        { "id": "3", "answer": "C", "score": 2 },
+        { "id": "4", "answer": "B", "score": 2 },
+        { "id": "5", "answer": "D", "score": 2 },
+        { "id": "6", "answer": "B", "score": 2 },
+        { "id": "7", "answer": "B", "score": 2 },
+        { "id": "8", "answer": "C", "score": 2 },
+        { "id": "9", "answer": "C", "score": 2 },
+        { "id": "10", "answer": "D", "score": 2 },
+        { "id": "11", "answer": "C", "score": 2 },
+        { "id": "12", "answer": "D", "score": 2 },
+        { "id": "13", "answer": "B", "score": 2 },
+        { "id": "14", "answer": "B", "score": 2 },
+        { "id": "15", "answer": "D", "score": 2 }
+      ]
+    }
+  },
+  {
+    "2": {
+      "name": "二、阅读程序",
+      "answers": [
+        { "id": "16", "answer": "A", "score": 1.5 },
+        { "id": "17", "answer": "B", "score": 1.5 },
+        { "id": "18", "answer": "A", "score": 1.5 },
+        { "id": "19", "answer": "B", "score": 1.5 },
+        { "id": "20", "answer": "A", "score": 3 },
+        { "id": "21", "answer": "D", "score": 3 },
+        { "id": "22", "answer": "B", "score": 1.5 },
+        { "id": "23", "answer": "B", "score": 1.5 },
+        { "id": "24", "answer": "A", "score": 1.5 },
+        { "id": "25", "answer": "D", "score": 3 },
+        { "id": "26", "answer": "A", "score": 3 },
+        { "id": "27", "answer": "D", "score": 3 },
+        { "id": "28", "answer": "B", "score": 1.5 },
+        { "id": "29", "answer": "A", "score": 1.5 },
+        { "id": "30", "answer": "B", "score": 1.5 },
+        { "id": "31", "answer": "C", "score": 3 },
+        { "id": "32", "answer": "B", "score": 3 },
+        { "id": "33", "answer": "D", "score": 3 }
+      ]
+    }
+  },
+  {
+    "3": {
+      "name": "三、完善程序",
+      "answers": [
+        { "id": "34", "answer": "D", "score": 3 },
+        { "id": "35", "answer": "D", "score": 3 },
+        { "id": "36", "answer": "D", "score": 3 },
+        { "id": "37", "answer": "A", "score": 3 },
+        { "id": "38", "answer": "D", "score": 3 },
+        { "id": "39", "answer": "C", "score": 3 },
+        { "id": "40", "answer": "C", "score": 3 },
+        { "id": "41", "answer": "C", "score": 3 },
+        { "id": "42", "answer": "B", "score": 3 },
+        { "id": "43", "answer": "B", "score": 3 }
+      ]
+    }
+  }
+]

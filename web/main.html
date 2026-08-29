@@ -20,7 +20,7 @@
     <script src="https://cdn.staticfile.org/highlight.js/11.9.0/languages/cpp.min.js" defer></script>
     <script src="https://cdn.staticfile.org/marked/11.1.1/marked.min.js" defer></script>
 
-    <!-- ====== 内联关键CSS（避免额外请求） ====== -->
+    <!-- ====== 内联关键CSS ====== -->
     <style>
         /* ============================================================
                    0. 全局变量 & 主题
@@ -55,11 +55,19 @@
             --collapse-hover: var(--hover-bg);
             --icon-color: var(--text-secondary);
             --icon-active: var(--active-text);
-            /* 行号专用 */
             --line-number-color: #8b949e;
             --line-number-border: #30363d;
             --code-block-header-bg: #161b22;
             --copy-btn-hover: #30363d;
+            /* 面板专用 */
+            --panel-bg: rgba(255, 255, 255, 0.12);
+            --panel-border: rgba(255, 255, 255, 0.25);
+            --panel-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            --panel-input-bg: rgba(255, 255, 255, 0.08);
+            --panel-input-border: rgba(255, 255, 255, 0.20);
+            --panel-correct: #3fb950;
+            --panel-wrong: #f85149;
+            --panel-score-bg: rgba(255, 255, 255, 0.06);
         }
 
         [data-theme="dark"] {
@@ -91,6 +99,14 @@
             --line-number-border: #30363d;
             --code-block-header-bg: #161b22;
             --copy-btn-hover: #30363d;
+            --panel-bg: rgba(20, 20, 25, 0.50);
+            --panel-border: rgba(255, 255, 255, 0.12);
+            --panel-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            --panel-input-bg: rgba(255, 255, 255, 0.06);
+            --panel-input-border: rgba(255, 255, 255, 0.10);
+            --panel-correct: #3fb950;
+            --panel-wrong: #f85149;
+            --panel-score-bg: rgba(255, 255, 255, 0.04);
         }
 
         [data-theme="ocean"] {
@@ -122,10 +138,18 @@
             --line-number-border: #8ab3c9;
             --code-block-header-bg: #c5dde8;
             --copy-btn-hover: #aac9d9;
+            --panel-bg: rgba(212, 233, 240, 0.45);
+            --panel-border: rgba(2, 69, 122, 0.20);
+            --panel-shadow: 0 20px 60px rgba(2, 69, 122, 0.25);
+            --panel-input-bg: rgba(255, 255, 255, 0.30);
+            --panel-input-border: rgba(2, 69, 122, 0.25);
+            --panel-correct: #0d7a3e;
+            --panel-wrong: #b91c1c;
+            --panel-score-bg: rgba(255, 255, 255, 0.20);
         }
 
         /* ============================================================
-                   1. 基础重置 & 布局
+                   1. 基础重置 & 布局（同原有）
                    ============================================================ */
         * {
             box-sizing: border-box;
@@ -163,7 +187,6 @@
             position: relative;
         }
 
-        /* ====== 菜单切换按钮（移动端） ====== */
         .menu-toggle {
             display: none;
             position: absolute;
@@ -367,7 +390,7 @@
             font-size: 18px;
         }
 
-        /* ====== 文件树 ====== */
+        /* ====== 文件树（同原有） ====== */
         .tree-node {
             list-style: none;
             padding-left: 0;
@@ -376,7 +399,6 @@
             list-style: none;
             margin: 2px 0;
         }
-
         .tree-item {
             display: flex;
             align-items: center;
@@ -439,7 +461,6 @@
         .tree-item.file-other:hover .name {
             opacity: 1;
         }
-
         .children {
             padding-left: 20px;
         }
@@ -509,6 +530,7 @@
             gap: 8px;
             align-items: center;
             flex-shrink: 0;
+            flex-wrap: wrap;
         }
         .action-btn {
             display: inline-flex;
@@ -546,6 +568,11 @@
         }
         .action-btn .label {
             font-size: 13px;
+        }
+        /* 面板按钮特殊样式（激活时高亮） */
+        .action-btn.panel-active {
+            background: var(--panel-correct);
+            box-shadow: 0 0 0 2px var(--panel-correct), 0 0 12px rgba(63, 185, 80, 0.3);
         }
 
         .preview-body {
@@ -692,9 +719,7 @@
             font-size: 1.1em;
         }
 
-        /* ============================================================
-                   2. ★★★ 代码块行号 & 复制按钮 ★★★
-                   ============================================================ */
+        /* ====== 代码块行号 & 复制 ====== */
         .code-block-wrapper {
             margin: 16px 0;
             border-radius: 8px;
@@ -704,8 +729,6 @@
             position: relative;
             border: 1px solid var(--border-color);
         }
-
-        /* 头部：语言标签 + 复制按钮 */
         .code-block-header {
             display: flex;
             justify-content: space-between;
@@ -757,8 +780,6 @@
         .copy-btn.copied:hover {
             color: #3fb950;
         }
-
-        /* 代码主体：行号 + 代码 并排 */
         .code-block-body {
             display: flex;
             overflow: auto;
@@ -782,8 +803,6 @@
             background: var(--scrollbar-thumb);
             border-radius: 4px;
         }
-
-        /* 行号列 */
         .line-numbers {
             display: flex;
             flex-direction: column;
@@ -815,8 +834,6 @@
         .line-numbers .ln::before {
             content: counter(line);
         }
-
-        /* 代码列 */
         .code-lines {
             display: flex;
             flex-direction: column;
@@ -829,7 +846,7 @@
             counter-reset: line;
         }
         .code-lines .cl {
-            color: #fff; /* 基础文字白色 */
+            color: #fff;
             display: block;
             white-space: pre-wrap;
             word-break: break-all;
@@ -839,13 +856,10 @@
             padding: 0;
             background: transparent;
         }
-        /* 空行占位 */
         .code-lines .cl-empty {
             min-height: 1.6em;
             display: block;
         }
-
-        /* 高亮代码在行内的样式（hljs 直接作用） */
         .code-lines .hljs {
             background: transparent !important;
             padding: 0 !important;
@@ -857,8 +871,6 @@
             font-size: inherit;
             line-height: inherit;
         }
-
-        /* 兼容原有 pre>code 结构（降级） */
         .code-block-body pre {
             margin: 0 !important;
             padding: 0 !important;
@@ -1161,7 +1173,217 @@
             opacity: 0.85;
         }
 
-        /* ====== 响应式 ====== */
+        /* ============================================================
+                   ★★★ 答题面板（新增） ★★★
+                   ============================================================ */
+
+
+        /* 章节分组 */
+        .exam-section {
+            margin-bottom: 16px;
+            padding: 12px 14px;
+            background: var(--panel-score-bg);
+            border-radius: 12px;
+            border-left: 3px solid var(--active-text);
+        }
+        .exam-section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .exam-section-title .section-badge {
+            font-size: 12px;
+            background: var(--active-bg);
+            color: var(--active-text);
+            padding: 0 10px;
+            border-radius: 20px;
+            font-weight: 400;
+        }
+
+        /* 单个题目 */
+        .exam-question {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 0;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+        .exam-question .q-label {
+            font-weight: 500;
+            min-width: 32px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+        .exam-question .q-input {
+            flex: 1;
+            padding: 4px 10px;
+            border: 1px solid var(--panel-input-border);
+            border-radius: 6px;
+            background: var(--panel-input-bg);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: var(--font-family);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            min-width: 40px;
+            max-width: 120px;
+            outline: none;
+        }
+        .exam-question .q-input:focus {
+            border-color: var(--active-text);
+            box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.15);
+        }
+        .exam-question .q-input:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .exam-question .q-result {
+            font-size: 16px;
+            min-width: 24px;
+            text-align: center;
+        }
+        .exam-question .q-result.correct {
+            color: var(--panel-correct);
+        }
+        .exam-question .q-result.wrong {
+            color: var(--panel-wrong);
+        }
+        .exam-question .q-score {
+            font-size: 12px;
+            color: var(--text-secondary);
+            min-width: 28px;
+            text-align: right;
+        }
+
+        /* 面板底部：按钮 + 结果 */
+        #examPanel .panel-footer {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-shrink: 0;
+            padding-top: 12px;
+            border-top: 1px solid var(--panel-border);
+        }
+        #examPanel .panel-footer .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        #examPanel .panel-footer .btn-group .action-btn {
+            font-size: 13px;
+            padding: 5px 16px;
+        }
+        #examPanel .panel-footer .btn-group .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        #examPanel .panel-footer .btn-group .action-btn.reset-btn {
+            background: var(--text-secondary);
+        }
+        #examPanel .panel-footer .btn-group .action-btn.reset-btn:hover:not(:disabled) {
+            background: var(--text-primary);
+        }
+        #examPanel .panel-footer .score-display {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #examPanel .panel-footer .score-display .score-num {
+            color: var(--active-text);
+            font-size: 20px;
+        }
+        #examPanel .panel-footer .score-display .score-total {
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* 面板拖拽把手 */
+        #examPanel .drag-handle {
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+            padding: 4px 8px;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+        #examPanel .drag-handle:hover {
+            background: var(--hover-bg);
+        }
+        #examPanel .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        /* 移动端适配面板 */
+        @media (max-width: 720px) {
+            #examPanel {
+                width: 94vw;
+                max-width: 94vw;
+                max-height: 82vh;
+                padding: 16px 16px 14px 16px;
+                border-radius: 16px;
+            }
+            #examPanel .panel-header h3 {
+                font-size: 16px;
+            }
+            .exam-question {
+                font-size: 13px;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+            .exam-question .q-input {
+                max-width: 80px;
+                font-size: 13px;
+                padding: 3px 8px;
+            }
+            .exam-question .q-label {
+                min-width: 28px;
+                font-size: 12px;
+            }
+            .exam-section {
+                padding: 10px 12px;
+            }
+            #examPanel .panel-footer {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            #examPanel .panel-footer .btn-group {
+                justify-content: center;
+            }
+            #examPanel .panel-footer .score-display {
+                justify-content: center;
+            }
+        }
+        @media (max-width: 420px) {
+            #examPanel {
+                width: 96vw;
+                max-width: 96vw;
+                max-height: 80vh;
+                padding: 12px 12px 12px 12px;
+            }
+            .exam-question .q-input {
+                max-width: 60px;
+                font-size: 12px;
+            }
+            .exam-section-title {
+                font-size: 13px;
+            }
+        }
+
+        /* ============================================================
+                   响应式（同原有）
+                   ============================================================ */
         @media (max-width: 720px) {
             body {
                 padding: 6px;
@@ -1358,6 +1580,11 @@
                     <span>请从左侧选择一个文件</span>
                 </div>
                 <div class="preview-actions">
+                    <!-- ====== 新增：面板按钮 ====== -->
+                    <button class="action-btn" id="examPanelBtn" disabled style="display:none;" title="打开答题面板">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span class="label">面板</span>
+                    </button>
                     <button class="action-btn" id="downloadBtn" disabled>
                         <i class="fas fa-download"></i>
                         <span class="label">下载</span>
@@ -1383,6 +1610,31 @@
         </main>
     </div>
 
+    <!-- ====== 答题面板（新增） ====== -->
+    <div id="examPanel">
+        <div class="panel-header" id="panelDragHandle">
+            <h3><i class="fas fa-clipboard-list"></i> 答题卡</h3>
+            <div style="display:flex;align-items:center;gap:6px;">
+                <span class="drag-handle" id="panelDragHandleIcon"><i class="fas fa-arrows-alt"></i></span>
+                <button class="panel-close" id="panelCloseBtn" title="关闭面板">✕</button>
+            </div>
+        </div>
+        <div class="panel-body" id="panelBody">
+            <!-- 由JS动态生成 -->
+        </div>
+        <div class="panel-footer">
+            <div class="btn-group">
+                <button class="action-btn" id="panelSubmitBtn"><i class="fas fa-check"></i> 提交</button>
+                <button class="action-btn reset-btn" id="panelResetBtn"><i class="fas fa-undo"></i> 重做</button>
+            </div>
+            <div class="score-display" id="panelScoreDisplay" style="display:none;">
+                <span>得分：</span>
+                <span class="score-num" id="panelScoreNum">0</span>
+                <span class="score-total">/ <span id="panelScoreTotal">0</span></span>
+            </div>
+        </div>
+    </div>
+
     <!-- 灯箱 -->
     <div class="lightbox-modal" id="lightboxModal">
         <div class="lightbox-content" id="lightboxContent">
@@ -1404,8 +1656,7 @@
             },
             fontUrl: 'https://cdn.jsdmirror.com/gh/sairatecn/files@master/files/font/Y-B008YeZiGongChangDanDanHei-2.ttf',
             repoLink: 'https://github.com/sairatecn/files.git',
-            // 缓存有效期（毫秒）
-            cacheTTL: 15 * 60 * 1000, // 15分钟
+            cacheTTL: 15 * 60 * 1000,
         };
 
         // ================================================================
@@ -1697,7 +1948,7 @@
         }
 
         // ================================================================
-        // 渲染引擎（marked + highlight.js）+ ★ 行号 & 复制 ★
+        // 渲染引擎（marked + highlight.js）
         // ================================================================
         let renderReady = false;
         let enginePromise = null;
@@ -1723,33 +1974,26 @@
             });
         }
 
-        // ★★★ 复制功能（全局） ★★★
         window.copyCodeBlock = function(wrapperId) {
             const wrapper = document.getElementById(wrapperId);
             if (!wrapper) return;
-            // 从 .code-lines 中提取纯文本
             const linesContainer = wrapper.querySelector('.code-lines');
             if (!linesContainer) return;
             const lineEls = linesContainer.querySelectorAll('.cl');
             let codeText = '';
             lineEls.forEach(el => {
-                // 使用 textContent 获取纯文本，保留换行
                 const txt = el.textContent;
                 codeText += txt + '\n';
             });
-            // 移除末尾多余的换行
             codeText = codeText.replace(/\n+$/, '');
             if (!codeText) {
-                // 降级：从 pre code 获取
                 const preCode = wrapper.querySelector('pre code');
                 if (preCode) {
                     codeText = preCode.textContent;
                 }
             }
             if (!codeText) {
-                // 极端降级：从整个 wrapper 提取
                 const allText = wrapper.textContent || '';
-                // 尝试去掉行号部分（简单启发式）
                 const lines = allText.split('\n');
                 const filtered = lines.filter(l => !/^\s*\d+\s*$/.test(l));
                 codeText = filtered.join('\n').trim();
@@ -1758,8 +2002,6 @@
                 showCopyFeedback(wrapper, false);
                 return;
             }
-
-            // 使用 Clipboard API
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(codeText).then(() => {
                     showCopyFeedback(wrapper, true);
@@ -1808,7 +2050,6 @@
             }
         }
 
-        // ★★★ 核心：renderer.code 生成带行号 & 复制按钮的 HTML ★★★
         async function initRenderEngine() {
             if (renderReady) return;
             if (enginePromise) return enginePromise;
@@ -1817,45 +2058,30 @@
                     await waitForLibraries(90000);
                     const renderer = new marked.Renderer();
 
-                    // ---- 自定义代码块渲染 ----
                     renderer.code = function(code, language) {
                         const validLang = (language && hljs.getLanguage(language)) ? language : 'plaintext';
-                        // 高亮整个代码块
                         const highlighted = hljs.highlight(code, { language: validLang }).value;
-
-                        // 按行分割（保留空行）
                         const lines = code.split('\n');
-                        // 如果最后一行是空的，移除它（但保留行数计数）
                         let actualLines = lines.slice();
                         if (actualLines.length > 0 && actualLines[actualLines.length - 1] === '') {
                             actualLines.pop();
                         }
                         const lineCount = actualLines.length;
-
-                        // 构建行号列
                         let lineNumbersHtml = '';
                         for (let i = 1; i <= lineCount; i++) {
                             lineNumbersHtml += `<span class="ln"></span>`;
                         }
-
-                        // 构建代码列（逐行包裹，保持高亮）
-                        // 需要将高亮后的HTML按行分割，并逐行包裹
                         const hlLines = highlighted.split('\n');
-                        // 如果 hlLines 比 actualLines 多，截断；如果少，补空
                         let codeLinesHtml = '';
                         for (let i = 0; i < lineCount; i++) {
                             const lineContent = (i < hlLines.length) ? hlLines[i] : '';
-                            // 如果是空行，使用占位符保留行高
                             if (lineContent.trim() === '' && !lineContent.includes('<')) {
                                 codeLinesHtml += `<span class="cl cl-empty"></span>`;
                             } else {
                                 codeLinesHtml += `<span class="cl">${lineContent}</span>`;
                             }
                         }
-
-                        // 生成唯一ID
                         const wrapperId = 'cb-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
-
                         return `
                             <div class="code-block-wrapper" id="${wrapperId}">
                                 <div class="code-block-header">
@@ -1873,7 +2099,6 @@
                         `;
                     };
 
-                    // ---- 图片渲染（保持原有逻辑，添加懒加载） ----
                     const originalImage = renderer.image;
                     renderer.image = function(href, title, text) {
                         let fullHref = href;
@@ -1899,7 +2124,6 @@
                         }
                         const titleAttr = title ? ` title="${escapeHtml(title)}"` : '';
                         const altAttr = text ? ` alt="${escapeHtml(text)}"` : '';
-                        // 添加 loading="lazy"
                         return `<img src="${fullHref}"${altAttr}${titleAttr} loading="lazy" />`;
                     };
 
@@ -2040,7 +2264,7 @@
                 const parent = textNode.parentNode;
                 let html = textNode.textContent;
                 const decoded = html.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g,
-                '&');
+                    '&');
                 const temp = document.createElement('div');
                 temp.innerHTML = decoded;
                 const iframes = temp.querySelectorAll('iframe');
@@ -2101,6 +2325,20 @@
         let isPrintable = false;
         const downloadBtn = document.getElementById('downloadBtn');
         const printBtn = document.getElementById('printBtn');
+
+        // ====== 面板相关状态 ======
+        let currentExamData = null; // 当前试卷的JSON数据
+        let examPanelVisible = false;
+        let panelSubmited = false;
+        const examPanel = document.getElementById('examPanel');
+        const panelBody = document.getElementById('panelBody');
+        const panelSubmitBtn = document.getElementById('panelSubmitBtn');
+        const panelResetBtn = document.getElementById('panelResetBtn');
+        const panelCloseBtn = document.getElementById('panelCloseBtn');
+        const panelScoreDisplay = document.getElementById('panelScoreDisplay');
+        const panelScoreNum = document.getElementById('panelScoreNum');
+        const panelScoreTotal = document.getElementById('panelScoreTotal');
+        const examPanelBtn = document.getElementById('examPanelBtn');
 
         function updateActionButtons(loaded, printable = true) {
             isFileLoaded = loaded;
@@ -2234,6 +2472,374 @@
         }
 
         // ================================================================
+        // ★★★ 答题面板核心逻辑 ★★★
+        // ================================================================
+
+        /** 解析试卷JSON数据 */
+        function parseExamData(jsonData) {
+            // 兼容两种格式：
+            // 格式1: [ { "1": { name, answers }, "2": { name, answers } } ]
+            // 格式2: [ { "1": { name, answers } }, { "2": { name, answers } } ]
+            const sections = [];
+            if (!Array.isArray(jsonData)) return sections;
+
+            for (const item of jsonData) {
+                if (typeof item === 'object' && item !== null) {
+                    for (const [key, value] of Object.entries(item)) {
+                        if (typeof value === 'object' && value !== null && value.name && Array.isArray(value.answers)) {
+                            sections.push({
+                                id: key,
+                                name: value.name,
+                                answers: value.answers.map(a => ({
+                                    id: String(a.id || ''),
+                                    answer: String(a.answer || '').trim(),
+                                    score: Number(a.score) || 0
+                                }))
+                            });
+                        }
+                    }
+                }
+            }
+            return sections;
+        }
+
+        /** 生成面板HTML */
+        function renderPanelContent(sections) {
+            if (!sections || sections.length === 0) {
+                return `<div style="padding:20px;text-align:center;color:var(--text-secondary);">无题目数据</div>`;
+            }
+            let html = '';
+            let totalScore = 0;
+            let questionIndex = 0;
+
+            for (const sec of sections) {
+                if (!sec.answers || sec.answers.length === 0) continue;
+                const secTotal = sec.answers.reduce((sum, a) => sum + a.score, 0);
+                totalScore += secTotal;
+
+                html += `<div class="exam-section">`;
+                html += `<div class="exam-section-title">
+                            <span>${escapeHtml(sec.name)}</span>
+                            <span class="section-badge">${sec.answers.length}题 · ${secTotal}分</span>
+                        </div>`;
+
+                for (const q of sec.answers) {
+                    questionIndex++;
+                    const qId = q.id || String(questionIndex);
+                    html += `
+                        <div class="exam-question" data-section="${escapeHtml(sec.id)}" data-qid="${escapeHtml(qId)}" data-answer="${escapeHtml(q.answer)}" data-score="${q.score}">
+                            <span class="q-label">${escapeHtml(qId)}.</span>
+                            <input class="q-input" type="text" placeholder="答案" autocomplete="off" spellcheck="false" />
+                            <span class="q-result"></span>
+                            <span class="q-score">${q.score}分</span>
+                        </div>
+                    `;
+                }
+                html += `</div>`;
+            }
+
+            // 存储总分
+            panelScoreTotal.textContent = totalScore;
+            return html;
+        }
+
+        /** 显示/隐藏面板 */
+        function toggleExamPanel(show) {
+            if (show === undefined) {
+                examPanelVisible = !examPanelVisible;
+            } else {
+                examPanelVisible = !!show;
+            }
+
+            if (examPanelVisible) {
+                examPanel.classList.remove('hidden-panel');
+                examPanel.style.display = 'flex';
+                // 让面板居中
+                centerPanel();
+                examPanel.classList.add('visible');
+                examPanelBtn.classList.add('panel-active');
+                // 重置提交状态
+                panelSubmited = false;
+                panelScoreDisplay.style.display = 'none';
+                // 启用所有输入框
+                panelBody.querySelectorAll('.q-input').forEach(inp => inp.disabled = false);
+                panelBody.querySelectorAll('.q-result').forEach(el => el.textContent = '');
+                panelSubmitBtn.disabled = false;
+                panelResetBtn.disabled = false;
+                // 聚焦第一个输入框
+                const firstInput = panelBody.querySelector('.q-input');
+                if (firstInput) setTimeout(() => firstInput.focus(), 100);
+            } else {
+                examPanel.classList.remove('visible');
+                examPanel.classList.add('hidden-panel');
+                setTimeout(() => {
+                    examPanel.style.display = 'none';
+                }, 250);
+                examPanelBtn.classList.remove('panel-active');
+            }
+        }
+
+        /** 面板居中 */
+        function centerPanel() {
+            const rect = examPanel.getBoundingClientRect();
+            const w = rect.width || 580;
+            const h = rect.height || 400;
+            const maxW = Math.min(w, window.innerWidth * 0.92);
+            const maxH = Math.min(h, window.innerHeight * 0.85);
+            examPanel.style.left = Math.max(10, (window.innerWidth - maxW) / 2) + 'px';
+            examPanel.style.top = Math.max(10, (window.innerHeight - maxH) / 2) + 'px';
+            examPanel.style.width = maxW + 'px';
+            examPanel.style.maxHeight = maxH + 'px';
+        }
+
+        /** 面板拖拽逻辑 */
+        let dragState = null;
+
+        function initPanelDrag() {
+            const handle = document.getElementById('panelDragHandle');
+            const icon = document.getElementById('panelDragHandleIcon');
+
+            function onStart(e) {
+                if (e.target.closest('.panel-close') || e.target.closest('button')) return;
+                const rect = examPanel.getBoundingClientRect();
+                const clientX = e.clientX || e.touches?.[0]?.clientX || 0;
+                const clientY = e.clientY || e.touches?.[0]?.clientY || 0;
+                dragState = {
+                    offsetX: clientX - rect.left,
+                    offsetY: clientY - rect.top,
+                    startX: rect.left,
+                    startY: rect.top,
+                    width: rect.width,
+                    height: rect.height
+                };
+                examPanel.style.transition = 'none';
+                document.addEventListener('mousemove', onMove);
+                document.addEventListener('mouseup', onEnd);
+                document.addEventListener('touchmove', onMove, { passive: false });
+                document.addEventListener('touchend', onEnd, { passive: false });
+                e.preventDefault?.();
+            }
+
+            function onMove(e) {
+                if (!dragState) return;
+                const clientX = e.clientX || e.touches?.[0]?.clientX || 0;
+                const clientY = e.clientY || e.touches?.[0]?.clientY || 0;
+                let left = clientX - dragState.offsetX;
+                let top = clientY - dragState.offsetY;
+                // 边界限制
+                const maxLeft = window.innerWidth - dragState.width - 10;
+                const maxTop = window.innerHeight - dragState.height - 10;
+                left = Math.max(10, Math.min(left, maxLeft));
+                top = Math.max(10, Math.min(top, maxTop));
+                examPanel.style.left = left + 'px';
+                examPanel.style.top = top + 'px';
+                examPanel.style.transform = 'none';
+                e.preventDefault?.();
+            }
+
+            function onEnd() {
+                dragState = null;
+                examPanel.style.transition = '';
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onEnd);
+                document.removeEventListener('touchmove', onMove);
+                document.removeEventListener('touchend', onEnd);
+            }
+
+            handle.addEventListener('mousedown', onStart);
+            handle.addEventListener('touchstart', onStart, { passive: false });
+            icon.addEventListener('mousedown', onStart);
+            icon.addEventListener('touchstart', onStart, { passive: false });
+        }
+
+        /** 提交答案 */
+        function submitAnswers() {
+            if (panelSubmited) return;
+            const questions = panelBody.querySelectorAll('.exam-question');
+            let totalCorrect = 0;
+            let totalScore = 0;
+            let hasEmpty = false;
+
+            questions.forEach(el => {
+                const input = el.querySelector('.q-input');
+                const resultEl = el.querySelector('.q-result');
+                const correctAnswer = el.dataset.answer || '';
+                const score = Number(el.dataset.score) || 0;
+                const userAnswer = (input.value || '').trim();
+
+                if (!userAnswer) {
+                    hasEmpty = true;
+                    resultEl.textContent = '⚠️';
+                    resultEl.className = 'q-result wrong';
+                    input.disabled = true;
+                    return;
+                }
+
+                const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+                if (isCorrect) {
+                    totalCorrect++;
+                    totalScore += score;
+                    resultEl.textContent = '✅';
+                    resultEl.className = 'q-result correct';
+                } else {
+                    resultEl.textContent = '❌';
+                    resultEl.className = 'q-result wrong';
+                }
+                input.disabled = true;
+            });
+
+            if (hasEmpty) {
+                // 有空的，提示但不阻止提交
+                // 但为了体验，我们提示用户
+                const allFilled = !hasEmpty;
+                if (!allFilled) {
+                    // 不阻止，但提示
+                }
+            }
+
+            panelScoreNum.textContent = totalScore;
+            panelScoreDisplay.style.display = 'flex';
+            panelSubmitBtn.disabled = true;
+            panelSubmited = true;
+            // 禁用所有输入框（已经禁用了）
+            panelBody.querySelectorAll('.q-input').forEach(inp => inp.disabled = true);
+        }
+
+        /** 重置答题 */
+        function resetAnswers() {
+            panelBody.querySelectorAll('.exam-question').forEach(el => {
+                const input = el.querySelector('.q-input');
+                const resultEl = el.querySelector('.q-result');
+                input.value = '';
+                input.disabled = false;
+                resultEl.textContent = '';
+                resultEl.className = 'q-result';
+            });
+            panelScoreDisplay.style.display = 'none';
+            panelSubmitBtn.disabled = false;
+            panelSubmited = false;
+            panelScoreNum.textContent = '0';
+            const firstInput = panelBody.querySelector('.q-input');
+            if (firstInput) setTimeout(() => firstInput.focus(), 50);
+        }
+
+        /** 加载试卷数据并显示面板 */
+        function loadExamPanel(jsonData) {
+            const sections = parseExamData(jsonData);
+            if (sections.length === 0) {
+                examPanelBtn.style.display = 'none';
+                examPanelBtn.disabled = true;
+                currentExamData = null;
+                return;
+            }
+            currentExamData = jsonData;
+            // 渲染内容
+            panelBody.innerHTML = renderPanelContent(sections);
+            // 显示按钮
+            examPanelBtn.style.display = 'inline-flex';
+            examPanelBtn.disabled = false;
+        }
+
+        /** 尝试加载JSON试卷 */
+        async function tryLoadExam(mdPath, mdName) {
+            const pureName = extractPureName(mdName);
+            if (!pureName) {
+                hideExamButton();
+                return;
+            }
+
+            // 构造JSON路径：与MD同目录下的 assets/ 文件夹
+            const dir = mdPath.substring(0, mdPath.lastIndexOf('/'));
+            const jsonPath = dir ? `${dir}/assets/${pureName}.json` : `assets/${pureName}.json`;
+            const jsonUrl = toCdnUrl(jsonPath) + '?' + getCacheBuster();
+
+            try {
+                const resp = await fetch(jsonUrl, { cache: 'reload' });
+                if (!resp.ok) {
+                    // 尝试根目录的assets
+                    const fallbackPath = `assets/${pureName}.json`;
+                    const fallbackUrl = toCdnUrl(fallbackPath) + '?' + getCacheBuster();
+                    const resp2 = await fetch(fallbackUrl, { cache: 'reload' });
+                    if (!resp2.ok) {
+                        hideExamButton();
+                        return;
+                    }
+                    const data = await resp2.json();
+                    loadExamPanel(data);
+                    return;
+                }
+                const data = await resp.json();
+                loadExamPanel(data);
+            } catch (err) {
+                console.warn('[试卷] 加载JSON失败:', err);
+                hideExamButton();
+            }
+        }
+
+        function hideExamButton() {
+            examPanelBtn.style.display = 'none';
+            examPanelBtn.disabled = true;
+            currentExamData = null;
+            // 如果面板开着，关闭
+            if (examPanelVisible) toggleExamPanel(false);
+        }
+
+        // ====== 面板事件绑定 ======
+        examPanelBtn.addEventListener('click', () => {
+            if (!currentExamData) {
+                // 尝试重新加载
+                if (currentFilePath && currentFileName) {
+                    tryLoadExam(currentFilePath, currentFileName);
+                }
+                return;
+            }
+            toggleExamPanel();
+            if (examPanelVisible) {
+                // 重新渲染内容（确保最新）
+                const sections = parseExamData(currentExamData);
+                panelBody.innerHTML = renderPanelContent(sections);
+                panelSubmited = false;
+                panelScoreDisplay.style.display = 'none';
+                panelSubmitBtn.disabled = false;
+                panelResetBtn.disabled = false;
+                panelBody.querySelectorAll('.q-input').forEach(inp => inp.disabled = false);
+                panelBody.querySelectorAll('.q-result').forEach(el => el.textContent = '');
+                panelScoreNum.textContent = '0';
+                const total = panelBody.querySelectorAll('.exam-question');
+                let totalScore = 0;
+                total.forEach(el => { totalScore += Number(el.dataset.score) || 0; });
+                panelScoreTotal.textContent = totalScore;
+            }
+        });
+
+        panelCloseBtn.addEventListener('click', () => toggleExamPanel(false));
+
+        panelSubmitBtn.addEventListener('click', submitAnswers);
+
+        panelResetBtn.addEventListener('click', resetAnswers);
+
+        // 键盘快捷键：Ctrl+Enter 提交
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                if (examPanelVisible && !panelSubmited) {
+                    e.preventDefault();
+                    submitAnswers();
+                }
+            }
+            if (e.key === 'Escape' && examPanelVisible) {
+                toggleExamPanel(false);
+            }
+        });
+
+        // 初始化面板拖拽
+        initPanelDrag();
+
+        // 窗口变化时重新定位面板
+        window.addEventListener('resize', () => {
+            if (examPanelVisible) centerPanel();
+        });
+
+        // ================================================================
         // 预览 Markdown（核心）
         // ================================================================
         async function previewMarkdown(relativePath, fileName, clickedElement) {
@@ -2242,9 +2848,13 @@
             document.querySelectorAll('.tree-item.active').forEach(el => el.classList.remove('active'));
             if (clickedElement) clickedElement.classList.add('active');
             previewBody.style.opacity = '0';
-            previewBody.innerHTML = `<div class="preview-loading"><i class="fas fa-spinner fa-pulse"></i> 加载中...</div>`;
+            previewBody.innerHTML =
+            `<div class="preview-loading"><i class="fas fa-spinner fa-pulse"></i> 加载中...</div>`;
             filePathDisplay.innerHTML = `<i class="fas fa-file-alt"></i><span>${escapeHtml(fileName)}</span>`;
             updateActionButtons(false);
+            // 隐藏面板按钮
+            hideExamButton();
+
             try {
                 await Promise.all([
                     initRenderEngine(),
@@ -2260,6 +2870,9 @@
                 currentFileName = fileName;
                 currentFilePath = relativePath;
                 currentFileUrl = fileUrl;
+
+                // ====== 尝试加载同名JSON试卷 ======
+                await tryLoadExam(relativePath, fileName);
 
                 const { processed, mathMap } = preprocessMath(mdText);
                 let htmlContent = marked.parse(processed);
@@ -2326,6 +2939,9 @@
             previewBody.style.opacity = '0';
             previewBody.innerHTML = '';
             previewBody.classList.remove('preview-full');
+            // 隐藏面板按钮
+            hideExamButton();
+
             if (['mp4', 'webm', 'ogg'].includes(ext)) {
                 previewVideo(fileUrl, fileName, previewBody);
                 updateActionButtons(true, false);
@@ -2498,7 +3114,6 @@
         const treeWrapper = document.getElementById('treeWrapper');
         const refreshBtn = document.getElementById('refreshBtn');
 
-        // 预初始化
         initRenderEngine().catch(err => console.warn('预初始化失败', err));
         loadKaTeX().catch(err => console.warn('KaTeX 预加载失败', err));
 
@@ -2512,7 +3127,6 @@
             updateActionButtons(false);
 
             try {
-                // 尝试从 localStorage 读取缓存
                 const cacheKey = 'filetree_cache';
                 const cacheMetaKey = 'filetree_meta';
                 let cachedData = null;
@@ -2545,7 +3159,6 @@
                     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
                     const text = await resp.text();
                     lines = text.split(/\r?\n/);
-                    // 存入缓存
                     try {
                         localStorage.setItem(cacheKey, JSON.stringify({ lines }));
                         localStorage.setItem(cacheMetaKey, JSON.stringify({ timestamp: Date.now() }));
@@ -2607,7 +3220,6 @@
         }
 
         refreshBtn.addEventListener('click', () => {
-            // 强制刷新：清除缓存
             try {
                 localStorage.removeItem('filetree_cache');
                 localStorage.removeItem('filetree_meta');
@@ -2618,7 +3230,7 @@
         });
 
         // ================================================================
-        // 打印样式适配（保留行号 & 复制按钮在打印时隐藏复制按钮）
+        // 打印样式适配
         // ================================================================
         const printStyle = document.createElement('style');
         printStyle.textContent = `
@@ -2637,11 +3249,12 @@
                 .lightbox-modal { display: none !important; }
                 .video-container { display: none !important; }
                 .collapse-quote { break-inside: avoid; }
+                #examPanel { display: none !important; }
             }
         `;
         document.head.appendChild(printStyle);
 
-        console.log('✅ SAIRATE文件库已启动（带行号 + 复制按钮 + 缓存优化）');
+        console.log('✅ SAIRATE文件库已启动（带行号 + 复制按钮 + 答题面板）');
     </script>
 </body>
 </html>
